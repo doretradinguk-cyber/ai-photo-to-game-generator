@@ -10,15 +10,12 @@
   <link rel="stylesheet" href="./app/styles/scene-layers.css" />
 </head>
 <body>
-  <div class="scene-stage" aria-hidden="true">
-    <img class="scene-stage__layer scene-stage__layer--base" src="./assets/backgrounds/retrowave-world.svg" alt="" />
-    <img class="scene-stage__layer scene-stage__layer--stars" src="./assets/retrowave/layers/stars.svg" alt="" />
-    <img class="scene-stage__layer scene-stage__layer--sun" src="./assets/retrowave/layers/sun-glow.svg" alt="" />
-    <img class="scene-stage__layer scene-stage__layer--city" src="./assets/retrowave/layers/skyline-lights.svg" alt="" />
-    <img class="scene-stage__layer scene-stage__layer--road" src="./assets/retrowave/layers/road-lines.svg" alt="" />
-    <img class="scene-stage__layer scene-stage__layer--reflections" src="./assets/retrowave/layers/reflections.svg" alt="" />
-    <img class="scene-stage__layer scene-stage__layer--lights" src="./assets/retrowave/layers/car-lights.svg" alt="" />
+  <div class="scene-stage" data-scene-manifest="./assets/scenes/first-retrowave/scene.json" aria-hidden="true">
+    <img class="scene-stage__layer scene-stage__layer--base" data-scene-base alt="" />
+    <img class="scene-stage__layer scene-stage__layer--frame" data-scene-frame alt="" />
+    <div class="scene-stage__glow"></div>
     <div class="scene-vignette"></div>
+    <div class="scene-stage__status" data-scene-status>LOADING FIRST RETROWAVE SCENE…</div>
   </div>
   <div class="scanlines" aria-hidden="true"></div>
   <main class="console-shell">
@@ -47,6 +44,7 @@
       <section class="panel quick-panel"><div class="panel-title"><h2>⌕ QUICK TOOLS</h2></div><div class="quick-tools"><button>⌗<small>CROP & FRAME</small></button><button id="upscaleBtn">⛶<small>UPSCALE 2× / 4×</small></button><button id="variationBtn">▣<small>VARIATIONS</small></button><button id="compareBtn">◫<small>COMPARE</small></button></div></section>
     </section>
   </main>
+  <script type="module" src="./app/scripts/background-scene.js"></script>
   <script type="module" src="./app/scripts/app.js"></script>
 </body>
 </html>
