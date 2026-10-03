@@ -167,6 +167,88 @@ Its job is to inspect the image/manifest and return a valid preset/settings obje
 
 AI Assist output must be schema-validated before applying it.
 
+## LOCKED AI ASSIST PROVIDER SEPARATION
+
+There are now **two assist providers and they must stay separate until a future pipeline/orchestrator is deliberately built above them**.
+
+### ChatGPT Assist Bridge
+- active/current assist path;
+- its own adapter/module, config, prompts, validation and error state;
+- may analyse uploaded images/scenes, create presets, suggest controls, create prompt text, background ideas, Firefly-ready prompt inspiration and Scene Generator prompt inspiration;
+- must work without Adobe Assist.
+
+### Adobe Assist
+- separate provider/module;
+- manual/future-connected path for now;
+- Firefly prompt inspiration, reference generation and Photoshop finishing recipes during development;
+- future direct Adobe API/bridge integration may automate generation/finishing;
+- must not depend on ChatGPT Assist.
+
+### Locked rule
+
+**Do not let ChatGPT Assist and Adobe Assist import, call or share mutable provider state with one another.**
+
+A future orchestration layer may sequence them, but that pipeline sits above both providers.
+
+Detailed architecture: `docs/ASSIST_PROVIDER_ARCHITECTURE.md`.
+
+## LOCKED PROMPT-FIELD WORKFLOW
+
+A first-class prompt text area is now required in both the **Image Maker / Photo-to-Game tool** and the **Scene Generator / Scene Animator**.
+
+Both tools must support:
+1. preset only;
+2. prompt only;
+3. preset + prompt.
+
+### Image Maker prompt field
+
+Use the uploaded photo plus preset and/or prompt to create new stylised directions, effects and background ideas while preserving source fidelity unless explicitly overridden.
+
+Prompt examples include:
+- neon game poster;
+- cyberpunk alley background;
+- retro sunset replacement;
+- comic-book treatment;
+- fog, glow and synthwave lighting.
+
+Image Maker actions may include:
+- Analyse Image;
+- Generate Prompt;
+- Generate New Preset;
+- Create Background Idea;
+- Create Firefly Prompt;
+- Send Prompt/Reference to Scene Generator;
+- Render / Preview;
+- Save Preset.
+
+### Scene Generator prompt field
+
+Use a base scene plus scene preset and/or prompt to create environment concepts, Firefly-ready background prompts, overlay ideas and loop-animation notes.
+
+Prompt examples include:
+- rainy cyberpunk street;
+- neon signs and animated reflections;
+- richer skyline;
+- fog and pulsing lights;
+- retro desert road at sunset;
+- blinking signs and moving reflections.
+
+Scene Generator actions may include:
+- Generate Scene Prompt;
+- Build Scene Idea;
+- Create Overlay Ideas;
+- Generate Animation Notes;
+- Create Firefly Background Prompt;
+- Save Scene Preset;
+- Preview Scene.
+
+### Tool separation
+
+Image Maker and Scene Generator may explicitly hand off prompts, reference images, scene recipes, preset recipes or exported assets, but they must not share hidden mutable state.
+
+Detailed UI/behaviour spec: `docs/AI_ASSIST_UI_SPEC.md`.
+
 ## PROVIDER-NEUTRAL RENDER JOB
 
 Every real render uses one stable contract. Example:
@@ -328,10 +410,13 @@ This Adobe workflow is part of the standard project method and should be remembe
 
 ### Phase D — AI Assist
 1. preset-generation schema;
-2. provider-neutral AI Assist adapter;
-3. local or remote provider support;
-4. validate generated preset before applying;
-5. save custom presets.
+2. separate ChatGPT Assist Bridge adapter;
+3. separate Adobe Assist adapter shell/manual status;
+4. prompt-field support in Image Maker;
+5. prompt-field support in Scene Generator;
+6. provider-neutral handoff/recipe validation;
+7. save custom presets/scene recipes;
+8. future orchestration layer only after both providers are stable independently.
 
 ### Phase E — plugin wrappers
 1. browser extension handoff;
@@ -354,24 +439,35 @@ Minimum functional test:
 9. reset works;
 10. invalid uploads fail cleanly;
 11. mobile/tablet does not need to be perfect initially, but desktop must be solid;
-12. adapter failure shows a useful recoverable error.
+12. adapter failure shows a useful recoverable error;
+13. prompt-only, preset-only and preset+prompt modes work independently;
+14. ChatGPT Assist can be unavailable without breaking Adobe Assist code paths;
+15. Adobe Assist can be unavailable without breaking ChatGPT Assist;
+16. Image Maker and Scene Generator do not leak mutable state into each other.
 
 ## CURRENT STATE AT THIS HANDOVER
 
-A placeholder/static prototype has already been committed to the new repository. It proves the repository/GitHub Pages path but is not the final UI.
+The Render Console is live with the approved retrowave background scene using a fixed base PNG plus four aligned transparent PNG overlay frames. The loop timing is currently **180 ms per frame**.
+
+The project now also has locked specifications for:
+- separate ChatGPT Assist Bridge and Adobe Assist providers;
+- a future orchestration/pipeline layer above them;
+- prompt text areas in Image Maker and Scene Generator;
+- preset-only, prompt-only and preset+prompt workflows;
+- explicit handoff between Image Maker and Scene Generator rather than hidden shared state.
 
 The older repository contains useful R&D and a working prototype/history, but **must not be edited during this project**. Read from it only when a proven behaviour or lesson saves time.
-
-The next implementation task is to replace the placeholder with the real first-concept console and wire the UI to a proper state/render adapter architecture.
 
 ## FIRST ACTION AFTER A CONTEXT RESET
 
 Read, in order:
 1. `HANDOVER.md`
-2. `docs/REAL_BUILD_SPEC.md`
-3. `docs/TEST_PLAN.md`
-4. `engine/contracts/render-job.schema.json`
-5. `engine/contracts/preset.schema.json`
-6. current `app/` files
+2. `docs/AI_ASSIST_UI_SPEC.md`
+3. `docs/ASSIST_PROVIDER_ARCHITECTURE.md`
+4. `docs/REAL_BUILD_SPEC.md`
+5. `docs/TEST_PLAN.md`
+6. `engine/contracts/render-job.schema.json`
+7. `engine/contracts/preset.schema.json`
+8. current `app/` files
 
 Then continue in `doretradinguk-cyber/ai-photo-to-game-generator` only.
