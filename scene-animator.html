@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050817" />
+  <title>Scene Animator</title>
+  <link rel="stylesheet" href="./app/styles/scene-animator.css" />
+</head>
+<body>
+  <main class="sa-shell">
+    <header class="sa-topbar">
+      <div>
+        <p class="eyebrow">AI PHOTO-TO-GAME TOOLSET</p>
+        <h1>SCENE <span>ANIMATOR</span></h1>
+        <p class="subtitle">Upload Firefly artwork as still frames, arrange the sequence, then preview it as a looping living-comic flipbook.</p>
+      </div>
+      <nav>
+        <a href="./index.html">← RENDER CONSOLE</a>
+        <button id="newSceneBtn" type="button">NEW SCENE</button>
+      </nav>
+    </header>
+
+    <section class="sa-grid">
+      <aside class="panel setup-panel">
+        <div class="panel-head"><h2>1. SCENE SETUP</h2><span id="sceneStatus">EMPTY</span></div>
+        <label class="field">Scene name<input id="sceneName" value="My Game Scene" maxlength="64" /></label>
+        <label class="field">Default frame hold<input id="defaultHold" type="number" min="40" max="2000" step="10" value="140" /><small>milliseconds</small></label>
+        <label class="field">Playback<select id="loopMode"><option value="loop">Loop forever</option><option value="once">Play once</option></select></label>
+        <div class="method-card">
+          <strong>LOCKED METHOD</strong>
+          <p>Base scenery still → aligned scene stills → flick-book playback → HTML/CSS UI above it.</p>
+        </div>
+        <button id="exportManifestBtn" class="primary" type="button">EXPORT SCENE JSON</button>
+      </aside>
+
+      <section class="panel stage-panel">
+        <div class="panel-head"><h2>2. LIVE PREVIEW</h2><span id="frameCounter">FRAME 0 / 0</span></div>
+        <div id="stage" class="stage">
+          <img id="basePreview" class="base-preview" alt="" hidden />
+          <img id="framePreview" class="frame-preview" alt="" hidden />
+          <div id="stageEmpty" class="stage-empty"><b>NO SCENE LOADED</b><span>Upload a base image and scene frames below.</span></div>
+        </div>
+        <div class="transport">
+          <button id="prevBtn" type="button">◀</button>
+          <button id="playBtn" class="play" type="button">▶ PLAY</button>
+          <button id="nextBtn" type="button">▶</button>
+          <label>SPEED<input id="speedRange" type="range" min="50" max="400" value="140" step="10" /></label>
+        </div>
+      </section>
+
+      <aside class="panel base-panel">
+        <div class="panel-head"><h2>3. BASE SCENERY</h2><span>STATIC</span></div>
+        <button id="baseDrop" class="upload-screen base-upload" type="button">
+          <input id="baseInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
+          <b>＋ UPLOAD BASE SCENE</b>
+          <span>Firefly PNG / JPG / WebP / SVG</span>
+          <small id="baseName">No base image loaded</small>
+        </button>
+        <p class="tip">Use one finished environment image as the scenery layer. It remains fixed while the frame images animate over it.</p>
+      </aside>
+    </section>
+
+    <section class="panel frames-panel">
+      <div class="panel-head"><h2>4. SCENE FRAMES</h2><span>DRAG TO REORDER</span></div>
+      <div class="frames-toolbar">
+        <button id="addFramesBtn" class="primary" type="button">＋ ADD SCENE IMAGES</button>
+        <input id="framesInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" multiple hidden />
+        <button id="clearFramesBtn" type="button">CLEAR FRAMES</button>
+        <span id="totalDuration">0 FRAMES</span>
+      </div>
+      <div id="framesGrid" class="frames-grid">
+        <button id="emptyAdd" class="upload-screen frame-upload" type="button"><b>＋ DROP / SELECT ARTWORK</b><span>Add all stills for the scene in sequence</span></button>
+      </div>
+    </section>
+
+    <section class="panel output-panel">
+      <div class="panel-head"><h2>5. OUTPUT CONTRACT</h2><span>GAME READY</span></div>
+      <div class="contract">
+        <div><b>BASE</b><span>One static scenery image</span></div>
+        <div><b>FRAMES</b><span>Ordered still images with individual hold times</span></div>
+        <div><b>MANIFEST</b><span>JSON describes image order, timing and loop behaviour</span></div>
+        <div><b>PLAYER</b><span>JavaScript cycles stills repeatedly like a flick book</span></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="./app/scripts/scene-animator.js"></script>
+</body>
+</html>
