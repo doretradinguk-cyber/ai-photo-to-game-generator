@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doretrading.uk/schemas/photo-to-game/render-job.schema.json",
+  "title": "AI Photo-to-Game Render Job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "source", "presetId", "controls", "analysis", "output"],
+  "properties": {
+    "version": { "const": 1 },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "width", "height", "mime"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "mime": { "enum": ["image/png", "image/jpeg", "image/webp"] }
+      }
+    },
+    "presetId": { "type": "string", "minLength": 1 },
+    "controls": {
+      "$ref": "preset.schema.json#/$defs/controls"
+    },
+    "analysis": {
+      "type": "object"
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "scale"],
+      "properties": {
+        "format": { "enum": ["png", "jpeg"] },
+        "scale": { "type": "number", "exclusiveMinimum": 0, "maximum": 4 }
+      }
+    }
+  }
+}
