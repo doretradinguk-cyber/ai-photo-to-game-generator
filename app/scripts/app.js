@@ -6,7 +6,10 @@ import { getAdapter } from './adapters/registry.js';
 
 const $ = (selector) => document.querySelector(selector);
 const controlsEl = $('#controls');
-const presetGrid = $('#presetGrid');
+const presetSelect = $('#presetSelect');
+const presetSwatch = $('#presetSwatch');
+const presetName = $('#presetName');
+const presetDescription = $('#presetDescription');
 const dropZone = $('#dropZone');
 const fileInput = $('#fileInput');
 const sourceImage = $('#sourceImage');
@@ -25,16 +28,16 @@ function syncUi() {
 
   const preset = getPreset(state.activePresetId);
   $('#activePresetLabel').textContent = `(${preset.name})`;
+  if (presetSelect && presetSelect.value !== preset.id) presetSelect.value = preset.id;
+  if (presetName) presetName.textContent = preset.name;
+  if (presetDescription) presetDescription.textContent = preset.description;
+  if (presetSwatch) presetSwatch.className = `preset-swatch preset-${preset.id}`;
 
   CONTROL_DEFS.forEach(([key], index) => {
     const input = document.querySelector(`#c${index}`);
     const output = document.querySelector(`#c${index}o`);
     if (input && document.activeElement !== input) input.value = state.controls[key];
     if (output) output.value = state.controls[key];
-  });
-
-  document.querySelectorAll('.preset-card').forEach((button) => {
-    button.classList.toggle('active', button.dataset.presetId === state.activePresetId);
   });
 }
 
@@ -55,17 +58,16 @@ CONTROL_DEFS.forEach(([key, label], index) => {
   controlsEl.append(row);
 });
 
-PRESETS.forEach((preset, index) => {
-  const button = document.createElement('button');
-  button.className = `preset-card${index === 0 ? ' active' : ''}`;
-  button.dataset.presetId = preset.id;
-  button.title = preset.description;
-  button.innerHTML = `<div class="preset-thumb preset-${preset.id}"></div><strong>${preset.name}</strong>`;
-  button.addEventListener('click', async () => {
-    selectPreset(preset.id);
-    if (state.sourceBitmap) await renderCurrent();
-  });
-  presetGrid.append(button);
+PRESETS.forEach((preset) => {
+  const option = document.createElement('option');
+  option.value = preset.id;
+  option.textContent = preset.name;
+  presetSelect.append(option);
+});
+
+presetSelect.addEventListener('change', async (event) => {
+  selectPreset(event.target.value);
+  if (state.sourceBitmap) await renderCurrent();
 });
 
 function validateImage(file) {
