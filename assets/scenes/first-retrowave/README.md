@@ -1,27 +1,28 @@
 # First Retrowave Scene
 
-This folder is the first committed production example of the Scene Animator method.
+This folder is the first production Scene Animator background for the AI Radio Render Console.
 
-## Runtime files committed to the repo
+## Active runtime
 
-- `base-scene.svg` — static scenery.
-- `frames/frame-01.svg` → `frame-04.svg` — aligned transparent overlay frames.
-- `scene.json` — source-of-truth order, timing and loop contract.
+The live console background now uses browser-optimised WebP derivatives made directly from the approved artwork supplied in `first-retrowave-scene(1).zip`.
 
-The Scene Animator page can load this scene directly from the repo and play it as a looping flip-book.
+Active runtime files:
 
-## Full-resolution art archive
+- `runtime/base-scene.webp`
+- `runtime/frame-01.webp`
+- `runtime/frame-02.webp`
+- `runtime/frame-03.webp`
+- `runtime/frame-04.webp`
+- `scene.json` — playback order, timing and loop contract
 
-The companion `first-retrowave-scene.zip` contains the separate full-resolution PNG art created for this scene:
+The main console reads `scene.json`, keeps the base scenery fixed, and cycles the four aligned still frames over it like a repeating flick-book.
 
-- `base-scene.png`
-- `frames/frame-01.png`
-- `frames/frame-02.png`
-- `frames/frame-03.png`
-- `frames/frame-04.png`
-- `mockup/scene-animator-first-scene-mockup.png`
-- `scene.json`
-- `base-scene.svg`
-- `README.md`
+## Source masters
 
-Keep the archive together. Firefly replacements should preserve the same composition and dimensions across every frame.
+The uploaded ZIP remains the master artwork archive. Its original PNG files are 1672 × 941 and should be kept for future re-exports and higher-resolution builds.
+
+The older procedural SVG files remain in this folder only as archived fallback/reference assets. They are no longer the active background.
+
+## Locked process
+
+Base scenery → aligned still frames → JSON manifest → looping JavaScript flip-book → HTML/CSS interface above the scene.
