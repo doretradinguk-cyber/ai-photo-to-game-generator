@@ -6,75 +6,86 @@ async function initBackgroundScene(stage) {
   const manifestUrl = stage.dataset.sceneManifest;
   if (!manifestUrl) return;
 
+  const base = stage.querySelector('[data-scene-base]');
+  const frame = stage.querySelector('[data-scene-frame]');
+  const status = stage.querySelector('[data-scene-status]');
+  if (!base || !frame) return;
+
+  let timer = null;
+  let index = 0;
+  let frames = [];
+  let reduceMotion = false;
+
+  const setStatus = text => {
+    if (status) status.textContent = text;
+  };
+
+  const loadImage = src => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => resolve(src);
+    img.onerror = () => reject(new Error(`Scene image failed: ${src}`));
+    img.src = src;
+  });
+
+  const show = () => {
+    const current = frames[index];
+    if (!current) return;
+    frame.src = current.src;
+    frame.classList.add('is-visible');
+    stage.dataset.sceneFrame = String(index + 1);
+    setStatus(`${stage.dataset.sceneName || 'SCENE'} • FRAME ${index + 1}/${frames.length}`);
+  };
+
+  const scheduleNext = () => {
+    if (document.hidden || reduceMotion || !frames.length) return;
+    const hold = frames[index].hold;
+    timer = window.setTimeout(() => {
+      index = (index + 1) % frames.length;
+      show();
+      scheduleNext();
+    }, hold);
+  };
+
   try {
-    const response = await fetch(manifestUrl, { cache: 'no-cache' });
+    const response = await fetch(manifestUrl, { cache: 'no-store' });
     if (!response.ok) throw new Error(`Scene manifest failed: ${response.status}`);
     const manifest = await response.json();
     const root = new URL('.', new URL(manifestUrl, window.location.href));
 
-    const base = stage.querySelector('[data-scene-base]');
-    const frame = stage.querySelector('[data-scene-frame]');
-    const status = stage.querySelector('[data-scene-status]');
-
-    if (!base || !frame) return;
-
-    base.src = new URL(manifest.base.file, root).href;
-
-    const frames = [...(manifest.frames || [])]
+    stage.dataset.sceneName = manifest.name || 'SCENE';
+    const baseSrc = new URL(manifest.base.file, root).href;
+    frames = [...(manifest.frames || [])]
       .sort((a, b) => (a.order || 0) - (b.order || 0))
       .map(item => ({
         src: new URL(item.file, root).href,
         hold: Math.max(40, Number(item.hold || 140))
       }));
 
-    for (const item of frames) {
-      const img = new Image();
-      img.src = item.src;
-    }
+    setStatus('LOADING FIRST RETROWAVE SCENE…');
+    await Promise.all([loadImage(baseSrc), ...frames.map(item => loadImage(item.src))]);
+
+    base.src = baseSrc;
 
     if (!frames.length) {
-      if (status) status.textContent = 'STATIC SCENE';
+      setStatus('STATIC SCENE');
       return;
     }
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let index = 0;
-    let timer = null;
-
-    const show = () => {
-      frame.classList.remove('is-visible');
-      frame.src = frames[index].src;
-      requestAnimationFrame(() => frame.classList.add('is-visible'));
-      if (status) status.textContent = `${manifest.name || 'SCENE'} • FRAME ${index + 1}/${frames.length}`;
-    };
-
-    const tick = () => {
-      if (document.hidden || reduceMotion) return;
-      show();
-      timer = window.setTimeout(() => {
-        index = (index + 1) % frames.length;
-        tick();
-      }, frames[index].hold);
-    };
-
-    if (reduceMotion) {
-      show();
-      return;
-    }
-
-    tick();
+    reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    show();
+    if (!reduceMotion) scheduleNext();
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden && timer) {
-        clearTimeout(timer);
+      if (document.hidden) {
+        if (timer) clearTimeout(timer);
         timer = null;
-      } else if (!document.hidden && !timer) {
-        tick();
+        return;
       }
+      if (!reduceMotion && !timer) scheduleNext();
     });
   } catch (error) {
     console.error('Background scene failed to load', error);
-    const status = stage.querySelector('[data-scene-status]');
-    if (status) status.textContent = 'SCENE LOAD ERROR';
+    setStatus('SCENE LOAD ERROR');
   }
 }

@@ -1,19 +1,19 @@
 {
-  "version": 2,
+  "version": 3,
   "tool": "scene-animator",
   "name": "First Retrowave Scene",
-  "method": "base-scenery-plus-aligned-still-frames-flipbook",
+  "method": "fixed-base-png-plus-aligned-transparent-png-overlays",
   "dimensions": { "width": 1672, "height": 941 },
-  "base": { "file": "runtime/base-scene.webp" },
+  "base": { "file": "base-scene.png" },
   "frames": [
-    { "order": 1, "file": "runtime/frame-01.webp", "hold": 140 },
-    { "order": 2, "file": "runtime/frame-02.webp", "hold": 140 },
-    { "order": 3, "file": "runtime/frame-03.webp", "hold": 140 },
-    { "order": 4, "file": "runtime/frame-04.webp", "hold": 140 }
+    { "order": 1, "file": "frames/frame-01.png", "hold": 140 },
+    { "order": 2, "file": "frames/frame-02.png", "hold": 140 },
+    { "order": 3, "file": "frames/frame-03.png", "hold": 140 },
+    { "order": 4, "file": "frames/frame-04.png", "hold": 140 }
   ],
   "loop": true,
   "sourceArchive": {
-    "master": "first-retrowave-scene(1).zip",
+    "master": "first-retrowave-scene(2).zip",
     "originalDimensions": { "width": 1672, "height": 941 },
     "sourceFiles": [
       "base-scene.png",
@@ -24,5 +24,5 @@
       "mockup/scene-animator-first-scene-mockup.png"
     ]
   },
-  "notes": "The live background now uses browser-optimised WebP derivatives made directly from the approved uploaded PNG artwork. The old procedural SVG scene is retained only as an archived fallback/reference and is no longer the active background."
+  "notes": "Render the approved base PNG continuously. Preload all four transparent PNG overlays, show exactly one overlay at a time, and cycle 01 -> 02 -> 03 -> 04 every 140 ms without fading the base or dropping the overlay between frames."
 }
