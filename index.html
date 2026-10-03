@@ -7,13 +7,18 @@
   <title>AI Radio Render Console</title>
   <link rel="stylesheet" href="./app/styles/console.css" />
   <link rel="stylesheet" href="./app/styles/retrowave-bg.css" />
+  <link rel="stylesheet" href="./app/styles/scene-layers.css" />
 </head>
 <body>
-  <div class="retrowave-world" aria-hidden="true">
-    <img class="rw-scene" src="./assets/backgrounds/retrowave-world.svg" alt="" />
-    <div class="rw-side-copy left">LIVE VISUALS<br>AI • CREATIVITY<br>NO LIMITS</div>
-    <div class="rw-side-copy right"><b>● LIVE</b><br>CONNECTED<br><span>CREATIVE SIGNAL 24/7</span></div>
-    <div class="rw-live-wave"></div>
+  <div class="scene-stage" aria-hidden="true">
+    <img class="scene-stage__layer scene-stage__layer--base" src="./assets/backgrounds/retrowave-world.svg" alt="" />
+    <img class="scene-stage__layer scene-stage__layer--stars" src="./assets/retrowave/layers/stars.svg" alt="" />
+    <img class="scene-stage__layer scene-stage__layer--sun" src="./assets/retrowave/layers/sun-glow.svg" alt="" />
+    <img class="scene-stage__layer scene-stage__layer--city" src="./assets/retrowave/layers/skyline-lights.svg" alt="" />
+    <img class="scene-stage__layer scene-stage__layer--road" src="./assets/retrowave/layers/road-lines.svg" alt="" />
+    <img class="scene-stage__layer scene-stage__layer--reflections" src="./assets/retrowave/layers/reflections.svg" alt="" />
+    <img class="scene-stage__layer scene-stage__layer--lights" src="./assets/retrowave/layers/car-lights.svg" alt="" />
+    <div class="scene-vignette"></div>
   </div>
   <div class="scanlines" aria-hidden="true"></div>
   <main class="console-shell">
