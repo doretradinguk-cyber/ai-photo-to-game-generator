@@ -259,6 +259,38 @@ Target local contract:
 
 The tool should discover local capability rather than assuming it exists.
 
+## ADOBE CREATIVE TOOLSET — APPROVED PRODUCTION PIPELINE
+
+Adobe is now an approved part of the production workflow for this project and related game/dashboard asset work.
+
+Available/expected uses include:
+- **Photoshop / Lightroom** for colour, tone, retouching, masking, consistency passes and batch image treatment;
+- **Firefly** for generating new backgrounds, scene variations, props, textures and other original visual assets;
+- **Illustrator / vector tools** for dashboard symbols, buttons, tabs, icons and scalable UI artwork;
+- **Premiere tools** later for video formatting, promotional clips, trailers and social exports;
+- **Acrobat / Express** where documents, presentations or designed reports are useful.
+
+### Locked Adobe rule
+
+**Never destructively experiment on an approved live asset.**
+
+Approved artwork remains the baseline/master. New Adobe edits or generations must be created as a separate, clearly versioned experimental asset set first (for example `v2`, `variant-a`, or an equivalent staging folder).
+
+Production promotion path:
+
+**APPROVED MASTER -> ADOBE EDIT / GENERATION -> REVIEW -> ARCHIVE IN DROP ZONE / ASSET LIBRARY -> PROMOTE INTO LIVE DASHBOARD OR GAME REPO**
+
+Only promote an Adobe-created or Adobe-edited asset into the live app/game after it has been reviewed and accepted.
+
+For the current retrowave console:
+- `first-retrowave-scene(2)` is the locked approved baseline;
+- do not overwrite its approved live artwork while experimenting;
+- create future Adobe improvements as a separate scene/version first;
+- possible Adobe-assisted improvements include richer skylines, neon flicker overlays, rain, reflections, smoke, lighting, seamless textures, dashboard buttons/tabs, UI symbols and scene mockups;
+- preserve composition and established visual direction unless a task explicitly asks for a redesign.
+
+This Adobe workflow is part of the standard project method and should be remembered after any context reset.
+
 ## SECURITY
 
 - never commit API keys/tokens;
