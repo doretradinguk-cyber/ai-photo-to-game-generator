@@ -13,7 +13,7 @@
       <div>
         <p class="eyebrow">AI PHOTO-TO-GAME TOOLSET</p>
         <h1>SCENE <span>ANIMATOR</span></h1>
-        <p class="subtitle">Upload Firefly artwork as still frames, plan 4 / 8 / 16-frame loops with the prompt console, then preview them as a living-comic flipbook.</p>
+        <p class="subtitle">Upload a Firefly scene, plan 4 / 8 / 16-frame loops with the prompt console, generate local PNG frame sequences, then preview them as a living-comic flipbook.</p>
       </div>
       <nav>
         <a href="./index.html">← RENDER CONSOLE</a>
@@ -25,12 +25,12 @@
       <aside class="panel setup-panel">
         <div class="panel-head"><h2>1. SCENE SETUP</h2><span id="sceneStatus">EMPTY</span></div>
         <label class="field">Scene name<input id="sceneName" value="My Game Scene" maxlength="64" /></label>
-        <label class="field">Frame count<select id="frameTarget"><option value="4">4 frames — quick loop</option><option value="8">8 frames — smooth scene</option><option value="16">16 frames — cinematic loop</option></select><small>Drives both the player and AI frame-plan recipe.</small></label>
+        <label class="field">Frame count<select id="frameTarget"><option value="4">4 frames — quick loop</option><option value="8">8 frames — smooth scene</option><option value="16">16 frames — cinematic loop</option></select><small>Drives the player, AI frame-plan recipe and Local Frame Synth.</small></label>
         <label class="field">Default frame hold<input id="defaultHold" type="number" min="40" max="2000" step="10" value="180" /><small>milliseconds</small></label>
         <label class="field">Playback<select id="loopMode"><option value="loop">Loop forever</option><option value="once">Play once</option></select></label>
         <div class="method-card">
           <strong>LOCKED METHOD</strong>
-          <p>Base scenery still → AI/prompt frame plan → aligned scene stills → 4 / 8 / 16-frame flick-book playback → HTML/CSS UI above it.</p>
+          <p>Base scenery still → AI/prompt frame plan → Local Frame Synth or imported AI frames → 4 / 8 / 16-frame flick-book playback → HTML/CSS UI above it.</p>
         </div>
         <button id="loadFirstSceneBtn" class="primary" type="button">RELOAD FIRST RETROWAVE SCENE</button>
         <button id="exportManifestBtn" class="primary" type="button">EXPORT SCENE JSON</button>
@@ -59,7 +59,7 @@
           <span>Firefly PNG / JPG / WebP / SVG</span>
           <small id="baseName">No base image loaded</small>
         </button>
-        <p class="tip">Use one finished environment image as the scenery layer. It remains fixed while aligned frame images animate over it.</p>
+        <p class="tip">Upload one finished Firefly environment image. It becomes the locked source for the frame plan and can now be turned into a local 4 / 8 / 16 PNG animation set.</p>
       </aside>
     </section>
 
@@ -79,15 +79,20 @@
             </select>
           </label>
           <label class="field prompt-field">Prompt / art direction
-            <textarea id="scenePrompt" rows="7" maxlength="1500" placeholder="Example: Rainy neon-noir hotel corridor. Keep the camera locked. Animate ceiling light flicker, magenta reflections, drifting haze and a subtle shadow movement. Make frame 16 return cleanly to frame 1."></textarea>
-            <small>Preset only, prompt only, or preset + prompt. The selected 4 / 8 / 16 frame target changes the generated plan.</small>
+            <textarea id="scenePrompt" rows="7" maxlength="1500" placeholder="Example: Rainy neon-noir hotel corridor. Keep the camera locked. Animate ceiling light flicker, magenta reflections, drifting haze and subtle shadow movement. Make the loop return cleanly to frame 1."></textarea>
+            <small>Preset only, prompt only, or preset + prompt. Keywords such as rain, fog, haze, flicker, neon, reflections, shadow, retro and scanlines also guide the Local Frame Synth.</small>
           </label>
           <div class="assist-actions">
             <button id="generateSceneRecipeBtn" class="primary" type="button">GENERATE SCENE RECIPE</button>
             <button id="copyFramePromptsBtn" type="button">COPY FRAME PROMPTS</button>
             <button id="exportRecipeBtn" type="button">EXPORT RECIPE JSON</button>
           </div>
-          <p class="assist-note"><b>Current function:</b> creates a bridge-ready frame plan and Firefly-ready prompt sequence. It does not yet generate the PNG files automatically. Generated PNGs can be added below and played immediately.</p>
+          <div class="synth-actions">
+            <button id="generateLocalFramesBtn" class="synth-primary" type="button">GENERATE PNG FRAMES — LOCAL</button>
+            <button id="downloadLocalFramesBtn" type="button" disabled>DOWNLOAD PNG SET</button>
+            <span id="localSynthStatus" data-tone="normal">READY • USES BASE + PRESET + PROMPT + FRAME COUNT</span>
+          </div>
+          <p class="assist-note"><b>Working now:</b> Local Frame Synth converts the uploaded still into a real 4 / 8 / 16-frame PNG set using prompt-aware lighting, colour, haze, rain, reflection and flicker effects while keeping scene geometry locked. <b>Later:</b> ChatGPT/Adobe image providers can replace or enhance this synthesis stage for true generative frame changes without changing the Scene Animator contract.</p>
         </div>
         <div class="frame-plan-wrap">
           <div class="frame-plan-head"><strong>FRAME PLAN</strong><span id="planMeta">4 frames • 180 ms</span></div>
@@ -112,13 +117,14 @@
     <section class="panel output-panel">
       <div class="panel-head"><h2>6. OUTPUT CONTRACT</h2><span>GAME READY</span></div>
       <div class="contract">
-        <div><b>BASE</b><span>One static scenery image</span></div>
+        <div><b>BASE</b><span>One uploaded or committed scenery image</span></div>
         <div><b>RECIPE</b><span>Preset + prompt + exact per-frame animation instructions</span></div>
-        <div><b>FRAMES</b><span>4, 8 or 16 ordered still images with individual hold times</span></div>
-        <div><b>MANIFEST</b><span>JSON records target count, prompt recipe, image order, timing and loop behaviour</span></div>
+        <div><b>FRAMES</b><span>4, 8 or 16 generated/imported PNG stills with individual hold times</span></div>
+        <div><b>PIPELINE</b><span>Local synth works now; ChatGPT / Adobe generation adapters can be inserted later</span></div>
       </div>
     </section>
   </main>
   <script type="module" src="./app/scripts/scene-animator.js?v=20261004-0140"></script>
+  <script type="module" src="./app/scripts/local-frame-synth.js?v=20261004-0215"></script>
 </body>
 </html>
