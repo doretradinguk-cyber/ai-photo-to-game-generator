@@ -1,0 +1,24 @@
+{
+  "id": "noir-ink",
+  "name": "Noir Ink",
+  "description": "High-contrast monochrome comic ink with sparse deliberate lines and bold shadow masses.",
+  "controls": {
+    "styleStrength": 82,
+    "detail": 58,
+    "contrast": 90,
+    "glow": 10,
+    "edgeClean": 82,
+    "skinToneLock": 100,
+    "backgroundBlend": 20
+  },
+  "browserRecipe": {
+    "palette": ["#050608", "#2a2d33", "#f1f1ed"],
+    "posterizeBands": 3,
+    "edgeMode": "heavy-ink",
+    "backgroundTint": "#101014"
+  },
+  "providerHints": {
+    "style": "clean professional black and white comic ink",
+    "preserve": ["identity", "pose", "accessories", "clothing-boundaries", "composition"]
+  }
+}
