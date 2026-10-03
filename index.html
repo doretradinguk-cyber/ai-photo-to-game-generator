@@ -10,21 +10,16 @@
 </head>
 <body>
   <div class="retrowave-world" aria-hidden="true">
-    <div class="rw-stars"></div>
-    <div class="rw-sun"></div>
-    <div class="rw-city"></div>
-    <div class="rw-palm left"></div><div class="rw-palm right"></div>
-    <div class="rw-horizon"></div>
-    <div class="rw-road"></div>
-    <div class="rw-lightstreak a"></div><div class="rw-lightstreak b"></div>
-    <div class="rw-tailglow"></div><div class="rw-car"></div>
+    <img class="rw-scene" src="./assets/backgrounds/retrowave-world.svg" alt="" />
+    <div class="rw-side-copy left">LIVE VISUALS<br>AI • CREATIVITY<br>NO LIMITS</div>
+    <div class="rw-side-copy right"><b>● LIVE</b><br>CONNECTED<br><span>CREATIVE SIGNAL 24/7</span></div>
     <div class="rw-live-wave"></div>
   </div>
   <div class="scanlines" aria-hidden="true"></div>
   <main class="console-shell">
     <header class="topbar panel">
       <div class="brand"><div class="brand-mark">▲</div><div><h1>AI RADIO <span>RENDER CONSOLE</span></h1><p>TURN REAL PHOTOS INTO ICONIC STYLED ART</p></div></div>
-      <div class="status-badges"><span>▣ DESKTOP READY</span><span>◎ BROWSER READY</span></div>
+      <div class="status-badges"><span>▣ DESKTOP READY<small>Windows • macOS • Linux</small></span><span>◎ BROWSER READY<small>Chrome • Edge • Safari</small></span></div>
       <nav><button class="nav active">CREATE</button><button class="nav">PRESETS</button><button class="nav">HISTORY</button><button class="nav">SETTINGS</button></nav>
     </header>
     <section class="workspace-grid">
@@ -37,14 +32,14 @@
         </div>
       </section>
       <aside class="right-stack">
-        <section class="panel ai-panel"><div class="panel-title"><h2>✦ AI ASSIST</h2><span class="ready">● AI READY</span></div><p>Analyse the image, suggest a style, or create a custom preset.</p><button id="generatePresetBtn" class="primary">✦ GENERATE NEW PRESET</button><button id="renderBtn" class="secondary">▶ RENDER NOW</button></section>
+        <section class="panel ai-panel"><div class="panel-title"><h2>✦ AI ASSIST</h2><span class="ready">● AI READY</span></div><p>Let AI analyse your image and suggest the best style, or create your own.</p><button id="generatePresetBtn" class="primary">✦ GENERATE NEW PRESET<small>Analyse image & create custom style</small></button><button id="renderBtn" class="secondary">▶ RENDER NOW<small>Use current settings</small></button></section>
         <section class="panel presets-panel"><div class="panel-title"><h2>▦ PRESETS</h2><button class="ghost">VIEW ALL ›</button></div><div id="presetGrid" class="preset-grid"></div></section>
       </aside>
     </section>
     <section class="bottom-grid">
       <section class="panel workflow-panel"><div class="panel-title"><h2>⚡ WORKFLOW</h2><span>STEP <b id="stepNo">1</b> OF 5</span></div><div class="workflow"><button class="step active" data-step="1"><b>1</b><span>⇧</span><strong>UPLOAD</strong><small>Add your image</small></button><i>→</i><button class="step" data-step="2"><b>2</b><span>⌗</span><strong>DETECT</strong><small>Analyse content</small></button><i>→</i><button class="step" data-step="3"><b>3</b><span>◉</span><strong>PRESET</strong><small>Choose style</small></button><i>→</i><button class="step" data-step="4"><b>4</b><span>✦</span><strong>AI RENDER</strong><small>Generate artwork</small></button><i>→</i><button class="step" data-step="5"><b>5</b><span>⇩</span><strong>EXPORT</strong><small>Save & share</small></button></div></section>
       <section class="panel export-panel"><div class="panel-title"><h2>5. EXPORT</h2></div><div class="export-controls"><label>Format<select id="formatSelect"><option>PNG</option><option>JPEG</option></select></label><label>Size<select id="sizeSelect"><option value="1">Original</option><option value="0.75">75%</option><option value="0.5">50%</option></select></label><label>Background<select><option>As Rendered</option></select></label></div><button id="exportBtn" class="primary">⇩ EXPORT IMAGE</button></section>
-      <section class="panel quick-panel"><div class="panel-title"><h2>⌕ QUICK TOOLS</h2></div><div class="quick-tools"><button>⌗<small>CROP & FRAME</small></button><button id="upscaleBtn">⛶<small>UPSCALE 2×</small></button><button id="variationBtn">▣<small>VARIATIONS</small></button><button id="compareBtn">◫<small>COMPARE</small></button></div></section>
+      <section class="panel quick-panel"><div class="panel-title"><h2>⌕ QUICK TOOLS</h2></div><div class="quick-tools"><button>⌗<small>CROP & FRAME</small></button><button id="upscaleBtn">⛶<small>UPSCALE 2× / 4×</small></button><button id="variationBtn">▣<small>VARIATIONS</small></button><button id="compareBtn">◫<small>COMPARE</small></button></div></section>
     </section>
   </main>
   <script type="module" src="./app/scripts/app.js"></script>
