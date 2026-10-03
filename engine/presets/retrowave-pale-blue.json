@@ -1,0 +1,24 @@
+{
+  "id": "retrowave-pale-blue",
+  "name": "Retrowave Pale Blue",
+  "description": "Hero preset: pale blue/cyan subject treatment with strong neon magenta/cyan comic styling.",
+  "controls": {
+    "styleStrength": 70,
+    "detail": 65,
+    "contrast": 80,
+    "glow": 55,
+    "edgeClean": 60,
+    "skinToneLock": 75,
+    "backgroundBlend": 40
+  },
+  "browserRecipe": {
+    "palette": ["#081226", "#173968", "#3bb6e8", "#dff8ff", "#ff35c8"],
+    "posterizeBands": 5,
+    "edgeMode": "ink",
+    "backgroundTint": "#8010a8"
+  },
+  "providerHints": {
+    "style": "professional retrowave comic illustration",
+    "preserve": ["identity", "pose", "accessories", "clothing-boundaries", "composition"]
+  }
+}
