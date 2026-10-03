@@ -104,19 +104,44 @@ function resetScene() {
   els.sceneName.value = 'My Game Scene'; renderFrames(); renderStage(); updateStatus();
 }
 
+function preloadImage(url) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(url);
+    image.onerror = () => reject(new Error(`Scene image failed: ${url}`));
+    image.src = url;
+  });
+}
+
 async function loadBundledScene() {
-  stopPlayback(); release(state.base); state.frames.forEach(release);
-  const manifestUrl = './assets/scenes/first-retrowave/scene.json';
-  const response = await fetch(manifestUrl, { cache: 'no-store' });
+  stopPlayback();
+  els.sceneStatus.textContent = 'LOADING';
+  const manifestUrl = new URL('./assets/scenes/first-retrowave/scene.json', window.location.href);
+  manifestUrl.searchParams.set('v', Date.now().toString());
+  const response = await fetch(manifestUrl.href, { cache: 'no-store' });
   if (!response.ok) throw new Error(`Scene manifest failed: ${response.status}`);
   const manifest = await response.json();
   const root = new URL('./assets/scenes/first-retrowave/', window.location.href);
-  state.base = remoteItem(manifest.base.file, new URL(manifest.base.file, root).href, 140);
-  state.frames = manifest.frames.map((frame) => remoteItem(frame.file.split('/').pop(), new URL(frame.file, root).href, Number(frame.hold || 140)));
+  const baseUrl = new URL(manifest.base.file, root).href;
+  const frames = manifest.frames.map((frame) => ({
+    ...frame,
+    url: new URL(frame.file, root).href
+  }));
+
+  await Promise.all([preloadImage(baseUrl), ...frames.map((frame) => preloadImage(frame.url))]);
+
+  release(state.base);
+  state.frames.forEach(release);
+  state.base = remoteItem(manifest.base.file.split('/').pop(), baseUrl, 140);
+  state.frames = frames.map((frame) => remoteItem(frame.file.split('/').pop(), frame.url, Number(frame.hold || 140)));
   state.current = 0;
   els.sceneName.value = manifest.name || 'First Retrowave Scene';
   els.loopMode.value = manifest.loop === false ? 'once' : 'loop';
-  els.basePreview.src = state.base.url; els.basePreview.hidden = false; els.baseName.textContent = state.base.name;
+  els.defaultHold.value = String(manifest.frames?.[0]?.hold || 140);
+  els.speedRange.value = String(manifest.frames?.[0]?.hold || 140);
+  els.basePreview.src = state.base.url;
+  els.basePreview.hidden = false;
+  els.baseName.textContent = state.base.name;
   renderFrames(); renderStage(); updateStatus();
 }
 
@@ -132,6 +157,13 @@ function bindDrop(target, onFiles) {
   target.addEventListener('drop', (e) => onFiles(e.dataTransfer.files));
 }
 
+function showLoadError(error) {
+  console.error(error);
+  els.sceneStatus.textContent = 'LOAD ERROR';
+  els.stageEmpty.hidden = false;
+  els.stageEmpty.innerHTML = '<b>SCENE FAILED TO LOAD</b><span>Refresh once GitHub Pages has finished deploying this commit.</span>';
+}
+
 els.baseDrop.addEventListener('click', () => els.baseInput.click());
 els.baseInput.addEventListener('change', (e) => e.target.files[0] && setBase(e.target.files[0]));
 els.addFramesBtn.addEventListener('click', () => els.framesInput.click());
@@ -143,8 +175,10 @@ els.prevBtn.addEventListener('click', () => step(-1));
 els.nextBtn.addEventListener('click', () => step(1));
 els.exportManifestBtn.addEventListener('click', exportManifest);
 els.newSceneBtn.addEventListener('click', resetScene);
-els.loadFirstSceneBtn.addEventListener('click', () => loadBundledScene().catch((error) => { console.error(error); els.sceneStatus.textContent = 'LOAD ERROR'; }));
+els.loadFirstSceneBtn.addEventListener('click', () => loadBundledScene().catch(showLoadError));
 
 bindDrop(els.baseDrop, (files) => files[0] && setBase(files[0]));
 bindDrop(els.framesGrid, (files) => addFrames(files));
 renderFrames(); renderStage(); updateStatus();
+
+loadBundledScene().catch(showLoadError);
