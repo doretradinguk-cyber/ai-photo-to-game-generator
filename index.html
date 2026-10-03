@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#050817" />
   <title>AI Radio Render Console</title>
-  <link rel="stylesheet" href="./app/styles/console.css?v=20261003-2135" />
+  <link rel="stylesheet" href="./app/styles/console.css?v=20261003-2315" />
   <link rel="stylesheet" href="./app/styles/retrowave-bg.css" />
   <link rel="stylesheet" href="./app/styles/scene-layers.css?v=20261003-2135" />
 </head>
@@ -34,7 +34,19 @@
         </div>
       </section>
       <aside class="right-stack">
-        <section class="panel ai-panel"><div class="panel-title"><h2>✦ AI ASSIST</h2><span class="ready">● AI READY</span></div><p>Let AI analyse your image and suggest the best style, or create your own.</p><button id="generatePresetBtn" class="primary">✦ GENERATE NEW PRESET<small>Analyse image & create custom style</small></button><button id="renderBtn" class="secondary">▶ RENDER NOW<small>Use current settings</small></button></section>
+        <section class="panel ai-panel">
+          <div class="panel-title"><h2>✦ AI ASSIST</h2><span class="ready">● AI READY</span></div>
+          <div class="assist-body">
+            <div class="assist-readout"><span>CHATGPT ASSIST BRIDGE</span><b>ACTIVE</b></div>
+            <label class="prompt-label" for="assistPrompt">PROMPT / ART DIRECTION</label>
+            <textarea id="assistPrompt" class="assist-prompt" rows="5" placeholder="Describe the look, effects or background you want…"></textarea>
+            <div class="assist-hint">Use a preset, a prompt, or both. Preset sets the base look; your prompt refines it.</div>
+            <div class="assist-actions">
+              <button id="generatePresetBtn" class="primary">✦ GENERATE NEW PRESET<small>Analyse image & build a custom style</small></button>
+              <button id="renderBtn" class="secondary">▶ RENDER NOW<small>Use current preset + prompt</small></button>
+            </div>
+          </div>
+        </section>
         <section class="panel presets-panel"><div class="panel-title"><h2>▦ PRESETS</h2><button class="ghost">VIEW ALL ›</button></div><div id="presetGrid" class="preset-grid"></div></section>
       </aside>
     </section>
