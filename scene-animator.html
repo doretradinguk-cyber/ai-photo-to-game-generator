@@ -13,7 +13,7 @@
       <div>
         <p class="eyebrow">AI PHOTO-TO-GAME TOOLSET</p>
         <h1>SCENE <span>ANIMATOR</span></h1>
-        <p class="subtitle">Upload Firefly artwork as still frames, arrange the sequence, then preview it as a looping living-comic flipbook.</p>
+        <p class="subtitle">Upload Firefly artwork as still frames, plan 4 / 8 / 16-frame loops with the prompt console, then preview them as a living-comic flipbook.</p>
       </div>
       <nav>
         <a href="./index.html">← RENDER CONSOLE</a>
@@ -25,12 +25,12 @@
       <aside class="panel setup-panel">
         <div class="panel-head"><h2>1. SCENE SETUP</h2><span id="sceneStatus">EMPTY</span></div>
         <label class="field">Scene name<input id="sceneName" value="My Game Scene" maxlength="64" /></label>
-        <label class="field">Frame count<select id="frameTarget"><option value="4">4 frames — quick loop</option><option value="8">8 frames — smooth scene</option><option value="16">16 frames — cinematic loop</option></select><small>Target sequence size</small></label>
+        <label class="field">Frame count<select id="frameTarget"><option value="4">4 frames — quick loop</option><option value="8">8 frames — smooth scene</option><option value="16">16 frames — cinematic loop</option></select><small>Drives both the player and AI frame-plan recipe.</small></label>
         <label class="field">Default frame hold<input id="defaultHold" type="number" min="40" max="2000" step="10" value="180" /><small>milliseconds</small></label>
         <label class="field">Playback<select id="loopMode"><option value="loop">Loop forever</option><option value="once">Play once</option></select></label>
         <div class="method-card">
           <strong>LOCKED METHOD</strong>
-          <p>Base scenery still → aligned scene stills → 4 / 8 / 16-frame flick-book playback → HTML/CSS UI above it.</p>
+          <p>Base scenery still → AI/prompt frame plan → aligned scene stills → 4 / 8 / 16-frame flick-book playback → HTML/CSS UI above it.</p>
         </div>
         <button id="loadFirstSceneBtn" class="primary" type="button">RELOAD FIRST RETROWAVE SCENE</button>
         <button id="exportManifestBtn" class="primary" type="button">EXPORT SCENE JSON</button>
@@ -59,12 +59,45 @@
           <span>Firefly PNG / JPG / WebP / SVG</span>
           <small id="baseName">No base image loaded</small>
         </button>
-        <p class="tip">Use one finished environment image as the scenery layer. It remains fixed while the frame images animate over it.</p>
+        <p class="tip">Use one finished environment image as the scenery layer. It remains fixed while aligned frame images animate over it.</p>
       </aside>
     </section>
 
+    <section class="panel assist-panel">
+      <div class="panel-head"><h2>4. SCENE AI ASSIST / PROMPT CONSOLE</h2><span id="assistStatus">READY TO PLAN</span></div>
+      <div class="assist-grid">
+        <div class="assist-controls">
+          <label class="field">Scene preset
+            <select id="scenePreset">
+              <option value="adobe-neon-noir">Adobe Neon Noir — game benchmark</option>
+              <option value="retrowave-pale-blue">Retrowave Pale Blue</option>
+              <option value="crimson-minimum">Crimson Minimum</option>
+              <option value="emerald">Emerald</option>
+              <option value="noir-ink">Noir Ink</option>
+              <option value="neon-comic">Neon Comic</option>
+              <option value="custom">Custom / prompt-led</option>
+            </select>
+          </label>
+          <label class="field prompt-field">Prompt / art direction
+            <textarea id="scenePrompt" rows="7" maxlength="1500" placeholder="Example: Rainy neon-noir hotel corridor. Keep the camera locked. Animate ceiling light flicker, magenta reflections, drifting haze and a subtle shadow movement. Make frame 16 return cleanly to frame 1."></textarea>
+            <small>Preset only, prompt only, or preset + prompt. The selected 4 / 8 / 16 frame target changes the generated plan.</small>
+          </label>
+          <div class="assist-actions">
+            <button id="generateSceneRecipeBtn" class="primary" type="button">GENERATE SCENE RECIPE</button>
+            <button id="copyFramePromptsBtn" type="button">COPY FRAME PROMPTS</button>
+            <button id="exportRecipeBtn" type="button">EXPORT RECIPE JSON</button>
+          </div>
+          <p class="assist-note"><b>Current function:</b> creates a bridge-ready frame plan and Firefly-ready prompt sequence. It does not yet generate the PNG files automatically. Generated PNGs can be added below and played immediately.</p>
+        </div>
+        <div class="frame-plan-wrap">
+          <div class="frame-plan-head"><strong>FRAME PLAN</strong><span id="planMeta">4 frames • 180 ms</span></div>
+          <ol id="framePlan" class="frame-plan"><li class="frame-plan-empty">Enter a prompt or choose a preset, then generate a scene recipe.</li></ol>
+        </div>
+      </div>
+    </section>
+
     <section class="panel frames-panel">
-      <div class="panel-head"><h2>4. SCENE FRAMES</h2><span id="frameTargetStatus">TARGET 4 FRAMES</span></div>
+      <div class="panel-head"><h2>5. SCENE FRAMES</h2><span id="frameTargetStatus">TARGET 4 FRAMES</span></div>
       <div class="frames-toolbar">
         <button id="addFramesBtn" class="primary" type="button">＋ ADD SCENE IMAGES</button>
         <input id="framesInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" multiple hidden />
@@ -77,15 +110,15 @@
     </section>
 
     <section class="panel output-panel">
-      <div class="panel-head"><h2>5. OUTPUT CONTRACT</h2><span>GAME READY</span></div>
+      <div class="panel-head"><h2>6. OUTPUT CONTRACT</h2><span>GAME READY</span></div>
       <div class="contract">
         <div><b>BASE</b><span>One static scenery image</span></div>
+        <div><b>RECIPE</b><span>Preset + prompt + exact per-frame animation instructions</span></div>
         <div><b>FRAMES</b><span>4, 8 or 16 ordered still images with individual hold times</span></div>
-        <div><b>MANIFEST</b><span>JSON records target count, image order, timing and loop behaviour</span></div>
-        <div><b>PLAYER</b><span>JavaScript cycles stills repeatedly like a flick book</span></div>
+        <div><b>MANIFEST</b><span>JSON records target count, prompt recipe, image order, timing and loop behaviour</span></div>
       </div>
     </section>
   </main>
-  <script type="module" src="./app/scripts/scene-animator.js?v=20261004-0015"></script>
+  <script type="module" src="./app/scripts/scene-animator.js?v=20261004-0140"></script>
 </body>
 </html>
