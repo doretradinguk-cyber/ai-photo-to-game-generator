@@ -7,6 +7,27 @@ export const PRESETS = [
     render: { hue: 190, saturation: 1.25, contrast: 1.15, ink: 1.0, posterLevels: 10, cyanWash: 0.16, magentaWash: 0.22 }
   },
   {
+    id: 'adobe-neon-noir',
+    name: 'ADOBE NEON NOIR',
+    description: 'New game benchmark: illustrated neon-noir horror with emerald/cyan practical light, hot magenta backlight, deep black shadow shapes, textured surfaces and cinematic corridor depth.',
+    defaults: { styleStrength: 84, detail: 78, contrast: 88, glow: 64, edgeClean: 76, skinToneLock: 82, backgroundBlend: 66 },
+    render: { hue: 285, saturation: 1.5, contrast: 1.34, ink: 1.32, posterLevels: 9, cyanWash: 0.13, magentaWash: 0.3 }
+  },
+  {
+    id: 'crimson-minimum',
+    name: 'CRIMSON MINIMUM',
+    description: 'Minimal crimson-and-black graphic treatment with hard shadow separation, restrained glow and simplified colour planes.',
+    defaults: { styleStrength: 78, detail: 46, contrast: 90, glow: 28, edgeClean: 88, skinToneLock: 72, backgroundBlend: 34 },
+    render: { hue: 338, saturation: 1.42, contrast: 1.42, ink: 1.4, posterLevels: 5, cyanWash: 0, magentaWash: 0.2 }
+  },
+  {
+    id: 'emerald',
+    name: 'EMERALD',
+    description: 'Dark emerald game-art treatment with cool green light, dense shadows and controlled neon energy.',
+    defaults: { styleStrength: 76, detail: 70, contrast: 82, glow: 50, edgeClean: 70, skinToneLock: 84, backgroundBlend: 56 },
+    render: { hue: 132, saturation: 1.35, contrast: 1.28, ink: 1.16, posterLevels: 9, cyanWash: 0.1, magentaWash: 0.02 }
+  },
+  {
     id: 'noir-ink',
     name: 'NOIR INK',
     description: 'High-contrast monochrome comic treatment inspired by the rollback comic-ink stage.',
