@@ -6,21 +6,36 @@ This document records the approved Scene Generator / Scene Animator direction so
 
 ## Current truth
 
-The Scene Animator currently **plays and organises separate still image frames**. It does not yet automatically transform one still image into 4, 8 or 16 generated PNG files by itself.
+The Scene Animator now has **two separate frame-production paths**:
 
-Current working responsibilities:
-- load one fixed base scene;
+1. **Local Frame Synth — working now**
+   - takes one uploaded/loaded base scene;
+   - reads the selected preset, prompt and 4 / 8 / 16 target;
+   - creates real same-size PNG frame files in the browser;
+   - applies looped colour/light/flicker plus prompt-aware rain, haze, reflection, shadow and scanline effects;
+   - injects those PNGs into the existing Scene Frames player;
+   - can download the generated PNG set.
+
+2. **AI/provider frame generation — future adapter path**
+   - ChatGPT Assist and Adobe Assist remain separate providers;
+   - a later provider may use the same scene recipe to make genuinely generative per-frame image changes;
+   - it must return 4 / 8 / 16 aligned frames through the same Scene Animator contract.
+
+Local Frame Synth is intentionally **not presented as Firefly/ChatGPT generative image creation**. It is the immediate deterministic browser solution that makes a still image into a usable multi-PNG animated scene today.
+
+## Working responsibilities
+
+Scene Animator can now:
+- load one fixed base scene, including Firefly PNG/JPG/WebP artwork;
 - accept ordered PNG/JPG/WebP/SVG scene frames;
 - target exactly 4, 8 or 16 frames;
-- play the frames as a loop;
+- generate a structured scene recipe and per-frame prompt plan;
+- use Local Frame Synth to create real 4 / 8 / 16 PNG files from the base still;
+- let the prompt influence local effect selection;
+- play generated/imported frames as a loop;
 - control frame hold timing;
-- export a scene manifest;
-- generate a structured scene recipe and per-frame prompt plan from the prompt console.
-
-Future generation responsibility:
-- take one base still + preset + prompt + target frame count;
-- generate 4, 8 or 16 aligned PNG frames through a dedicated provider pipeline;
-- return those frames to Scene Animator without changing the Scene Animator UI contract.
+- download locally generated PNG frames;
+- export scene recipe JSON and scene manifest JSON.
 
 ## Locked architecture
 
@@ -36,7 +51,9 @@ Scene Animator owns:
 - playback;
 - manifest export.
 
-ChatGPT Assist Bridge and Adobe Assist remain separate providers. A later orchestration/generation pipeline may consume the Scene Animator recipe and produce image files.
+**Local Frame Synth is its own provider-neutral browser module** (`app/scripts/local-frame-synth.js`). It must remain independent from ChatGPT Assist and Adobe Assist.
+
+ChatGPT Assist Bridge and Adobe Assist remain separate providers. A later orchestration/generation pipeline may consume the Scene Animator recipe and produce enhanced/replacement image files.
 
 ## Locked prompt-console workflow
 
@@ -46,15 +63,18 @@ User can use:
 3. preset + prompt.
 
 Inputs:
-- source/base scene, optional for planning;
+- source/base scene;
 - scene preset;
 - prompt / art direction;
 - target frames: 4, 8 or 16;
 - default frame hold;
 - loop mode.
 
-Primary action:
+Primary planning action:
 - **Generate Scene Recipe**
+
+Immediate frame action:
+- **Generate PNG Frames — Local**
 
 Outputs:
 - preset direction;
@@ -65,12 +85,37 @@ Outputs:
 - suggested file name per frame;
 - hold duration;
 - loop intent;
-- provider-neutral recipe JSON.
+- provider-neutral recipe JSON;
+- local PNG frame set when Local Frame Synth is used.
 
 Additional actions:
 - Copy Frame Prompts;
 - Export Recipe JSON;
+- Download PNG Set;
 - Export Scene JSON.
+
+## Prompt-aware Local Frame Synth
+
+The local module keeps geometry/camera fixed and changes presentation/effect layers over a cyclic phase.
+
+Prompt keywords currently recognised include concepts such as:
+- rain / storm / drizzle / wet;
+- haze / fog / smoke / mist / steam;
+- flicker / blink / pulse / light;
+- reflection / wet floor / neon;
+- shadow / silhouette / darkness;
+- retro / VHS / scanline / CRT.
+
+Preset selection also drives colour, contrast, saturation and tint behaviour for:
+- Adobe Neon Noir;
+- Retrowave Pale Blue;
+- Crimson Minimum;
+- Emerald;
+- Noir Ink;
+- Neon Comic;
+- Custom.
+
+This mapping is a deterministic baseline and can be extended without changing the frame/player contract.
 
 ## Frame-count behaviour
 
@@ -97,11 +142,12 @@ Use micro-transitions and restrained changes. Best for:
 - subtle environmental motion;
 - high-quality game background animation.
 
-The selected frame count must drive both:
+The selected frame count drives:
 - Scene Animator capacity/playback;
-- AI/prompt frame-plan generation.
+- AI/prompt frame-plan generation;
+- Local Frame Synth output count and per-frame effect strength.
 
-Changing the selected target after a recipe exists should regenerate the recipe for the new target.
+Changing the selected target after a recipe exists regenerates the recipe for the new target.
 
 ## Composition lock
 
@@ -117,30 +163,48 @@ All generated frames in one scene must preserve:
 
 Only the details intended to animate should change between frames.
 
-The last frame should move back toward the first frame so loop closure is clean.
+Local Frame Synth achieves this by drawing every frame from the exact same source bitmap and varying only effect layers/colour treatment.
 
 ## Adobe / Firefly workflow now
 
-Until direct Adobe automation is connected:
-1. Scene Animator generates the recipe and frame prompts.
-2. User copies the prompts.
-3. Frames can be generated/refined manually in Firefly / Photoshop.
-4. Export frames as aligned PNGs.
-5. Add them to Scene Animator.
-6. Preview the loop.
-7. Save approved assets through the Drop Zone / archive pipeline.
+There are now two useful Firefly workflows.
 
-## Future automatic generation pipeline
+### Fast local animation workflow
+1. Generate/export one finished scene in Firefly.
+2. Upload it as the Scene Animator base.
+3. Choose 4 / 8 / 16 frames.
+4. Pick a scene preset and/or write the motion prompt.
+5. Generate Scene Recipe.
+6. Click **Generate PNG Frames — Local**.
+7. Preview the loop immediately.
+8. Download the PNG set if approved.
+
+### Higher-end manual Firefly workflow
+1. Generate Scene Recipe.
+2. Copy the per-frame prompts.
+3. Create/refine matching frames manually in Firefly / Photoshop.
+4. Export aligned PNGs.
+5. Add them to Scene Animator, replacing the local synth frames if desired.
+6. Review and archive approved assets through the Drop Zone pipeline.
+
+## Future automatic provider pipeline
 
 Later:
 
 `Base Scene + Preset + Prompt + Target Frames -> Provider Pipeline -> 4/8/16 PNG Frames -> Scene Animator -> Review -> Archive -> Game/Dashboard`
 
-The future provider may be Adobe, ChatGPT image generation, local AI, or another renderer. Scene Animator must remain provider-neutral.
+Possible providers include Adobe, ChatGPT image generation, local AI, or another renderer. Scene Animator remains provider-neutral.
+
+The Local Frame Synth remains useful as:
+- instant fallback;
+- offline/browser preview;
+- first-pass motion prototype;
+- deterministic comparison baseline;
+- graceful fallback when a generative provider is unavailable.
 
 ## Current implementation
 
-The committed Scene Animator now includes:
+The committed Scene Animator includes:
 - 4 / 8 / 16 frame selector;
 - prompt text area;
 - scene preset selector;
@@ -150,6 +214,9 @@ The committed Scene Animator now includes:
 - per-frame recipe preview;
 - recipe regeneration when frame count changes;
 - recipe inclusion in exported scene manifest;
-- explicit UI note that PNG creation is not yet automatic.
+- **Generate PNG Frames — Local**;
+- **Download PNG Set**;
+- prompt-aware browser effects;
+- automatic injection of generated PNG files into Scene Frames for immediate playback.
 
-This is the approved baseline for the next generation-pipeline task.
+This is the approved baseline for the future true generative-provider frame pipeline.
