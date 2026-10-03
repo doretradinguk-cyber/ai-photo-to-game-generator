@@ -6,10 +6,10 @@
   "dimensions": { "width": 1672, "height": 941 },
   "base": { "file": "base-scene.png" },
   "frames": [
-    { "order": 1, "file": "frames/frame-01.png", "hold": 140 },
-    { "order": 2, "file": "frames/frame-02.png", "hold": 140 },
-    { "order": 3, "file": "frames/frame-03.png", "hold": 140 },
-    { "order": 4, "file": "frames/frame-04.png", "hold": 140 }
+    { "order": 1, "file": "frames/frame-01.png", "hold": 180 },
+    { "order": 2, "file": "frames/frame-02.png", "hold": 180 },
+    { "order": 3, "file": "frames/frame-03.png", "hold": 180 },
+    { "order": 4, "file": "frames/frame-04.png", "hold": 180 }
   ],
   "loop": true,
   "sourceArchive": {
@@ -24,5 +24,5 @@
       "mockup/scene-animator-first-scene-mockup.png"
     ]
   },
-  "notes": "Render the approved base PNG continuously. Preload all four transparent PNG overlays, show exactly one overlay at a time, and cycle 01 -> 02 -> 03 -> 04 every 140 ms without fading the base or dropping the overlay between frames."
+  "notes": "Render the approved base PNG continuously. Preload all four transparent PNG overlays, show exactly one overlay at a time, and cycle 01 -> 02 -> 03 -> 04 every 180 ms without fading the base or dropping the overlay between frames."
 }
