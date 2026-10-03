@@ -1,20 +1,21 @@
 {
-  "version": 1,
+  "version": 2,
   "tool": "scene-animator",
   "name": "First Retrowave Scene",
   "method": "base-scenery-plus-aligned-still-frames-flipbook",
-  "dimensions": { "width": 1600, "height": 900 },
-  "base": { "file": "base-scene.svg" },
+  "dimensions": { "width": 1672, "height": 941 },
+  "base": { "file": "runtime/base-scene.webp" },
   "frames": [
-    { "order": 1, "file": "frames/frame-01.svg", "hold": 140 },
-    { "order": 2, "file": "frames/frame-02.svg", "hold": 140 },
-    { "order": 3, "file": "frames/frame-03.svg", "hold": 140 },
-    { "order": 4, "file": "frames/frame-04.svg", "hold": 140 }
+    { "order": 1, "file": "runtime/frame-01.webp", "hold": 140 },
+    { "order": 2, "file": "runtime/frame-02.webp", "hold": 140 },
+    { "order": 3, "file": "runtime/frame-03.webp", "hold": 140 },
+    { "order": 4, "file": "runtime/frame-04.webp", "hold": 140 }
   ],
   "loop": true,
-  "archive": {
-    "fullResolutionPngPack": "first-retrowave-scene.zip",
-    "expectedPngFiles": [
+  "sourceArchive": {
+    "master": "first-retrowave-scene(1).zip",
+    "originalDimensions": { "width": 1672, "height": 941 },
+    "sourceFiles": [
       "base-scene.png",
       "frames/frame-01.png",
       "frames/frame-02.png",
@@ -23,5 +24,5 @@
       "mockup/scene-animator-first-scene-mockup.png"
     ]
   },
-  "notes": "Runtime SVG set is committed for GitHub Pages. The downloadable source pack contains the full-resolution PNG art and approved mockup."
+  "notes": "The live background now uses browser-optimised WebP derivatives made directly from the approved uploaded PNG artwork. The old procedural SVG scene is retained only as an archived fallback/reference and is no longer the active background."
 }
