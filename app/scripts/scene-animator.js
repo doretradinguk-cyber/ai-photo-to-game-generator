@@ -1,6 +1,13 @@
 const qs = (s) => document.querySelector(s);
 
-const state = { base: null, frames: [], current: 0, playing: false, timer: null };
+const state = {
+  base: null,
+  frames: [],
+  current: 0,
+  playing: false,
+  timer: null,
+  assistRecipe: null
+};
 
 const els = {
   sceneName: qs('#sceneName'), frameTarget: qs('#frameTarget'), frameTargetStatus: qs('#frameTargetStatus'),
@@ -11,10 +18,24 @@ const els = {
   speedRange: qs('#speedRange'), framesInput: qs('#framesInput'), addFramesBtn: qs('#addFramesBtn'),
   emptyAdd: qs('#emptyAdd'), clearFramesBtn: qs('#clearFramesBtn'), framesGrid: qs('#framesGrid'),
   totalDuration: qs('#totalDuration'), exportManifestBtn: qs('#exportManifestBtn'), newSceneBtn: qs('#newSceneBtn'),
-  sceneStatus: qs('#sceneStatus'), loadFirstSceneBtn: qs('#loadFirstSceneBtn')
+  sceneStatus: qs('#sceneStatus'), loadFirstSceneBtn: qs('#loadFirstSceneBtn'),
+  scenePreset: qs('#scenePreset'), scenePrompt: qs('#scenePrompt'), assistStatus: qs('#assistStatus'),
+  generateSceneRecipeBtn: qs('#generateSceneRecipeBtn'), copyFramePromptsBtn: qs('#copyFramePromptsBtn'),
+  exportRecipeBtn: qs('#exportRecipeBtn'), framePlan: qs('#framePlan'), planMeta: qs('#planMeta')
+};
+
+const PRESET_DIRECTIONS = {
+  'adobe-neon-noir': 'Illustrated neon-noir game scene with emerald/cyan practical light, hot magenta backlight, deep black shadow shapes, textured surfaces and cinematic depth.',
+  'retrowave-pale-blue': 'Retrowave game-art scene with pale cyan highlights, magenta/cyan neon, graphic cel contrast, reflective surfaces and a clean synthwave atmosphere.',
+  'crimson-minimum': 'Minimal crimson-and-black game-art scene with hard shadow separation, restrained glow and simplified colour planes.',
+  emerald: 'Dark emerald game-art scene with cool green light, dense shadows, selective cyan detail and controlled neon energy.',
+  'noir-ink': 'High-contrast monochrome comic-ink scene with confident silhouettes, graphic shadows and restrained highlights.',
+  'neon-comic': 'Bold neon comic scene with strong magenta/cyan contrast, graphic shadow masses, glow accents and clear readable forms.',
+  custom: 'Follow the user prompt as the primary art direction while keeping the camera, composition and scene geometry consistent across frames.'
 };
 
 function targetCount() { return Math.max(4, Number(els.frameTarget?.value || 4)); }
+function defaultHold() { return Math.max(40, Number(els.defaultHold?.value || 180)); }
 
 function fileToItem(file, hold) {
   return { id: crypto.randomUUID(), file, name: file.name, url: URL.createObjectURL(file), hold, revocable: true };
@@ -28,7 +49,7 @@ function release(item) { if (item?.revocable && item.url) URL.revokeObjectURL(it
 
 function setBase(file) {
   release(state.base);
-  state.base = fileToItem(file, Number(els.defaultHold.value || 180));
+  state.base = fileToItem(file, defaultHold());
   els.basePreview.src = state.base.url;
   els.basePreview.hidden = false;
   els.baseName.textContent = file.name;
@@ -36,7 +57,7 @@ function setBase(file) {
 }
 
 function addFrames(files) {
-  const hold = Number(els.defaultHold.value || 180);
+  const hold = defaultHold();
   const max = targetCount();
   const remaining = Math.max(0, max - state.frames.length);
   const accepted = [...files].slice(0, remaining);
@@ -61,6 +82,7 @@ function updateStatus() {
   const complete = state.base && state.frames.length === target;
   els.sceneStatus.textContent = complete ? 'READY' : (state.base || state.frames.length ? 'IN PROGRESS' : 'EMPTY');
   if (els.frameTargetStatus) els.frameTargetStatus.textContent = `TARGET ${target} FRAMES`;
+  if (els.planMeta) els.planMeta.textContent = `${target} frames • ${defaultHold()} ms`;
 }
 
 function renderFrames() {
@@ -112,6 +134,14 @@ function scheduleFrame() {
 function togglePlayback() { if (state.playing) return stopPlayback(); if (!state.frames.length) return; state.playing = true; els.playBtn.textContent = '❚❚ PAUSE'; scheduleFrame(); }
 function step(delta) { stopPlayback(); if (!state.frames.length) return; state.current = (state.current + delta + state.frames.length) % state.frames.length; renderStage(); }
 
+function resetAssist() {
+  state.assistRecipe = null;
+  if (els.scenePrompt) els.scenePrompt.value = '';
+  if (els.scenePreset) els.scenePreset.value = 'adobe-neon-noir';
+  if (els.assistStatus) els.assistStatus.textContent = 'READY TO PLAN';
+  renderFramePlan();
+}
+
 function resetScene() {
   stopPlayback(); release(state.base); state.frames.forEach(release);
   state.base = null; state.frames = []; state.current = 0;
@@ -120,6 +150,7 @@ function resetScene() {
   els.frameTarget.value = '4';
   els.defaultHold.value = '180';
   els.speedRange.value = '180';
+  resetAssist();
   renderFrames(); renderStage(); updateStatus();
 }
 
@@ -152,10 +183,127 @@ async function loadBundledScene() {
   renderFrames(); renderStage(); updateStatus();
 }
 
+function interpolationFor(index, count) {
+  if (count <= 1) return 0;
+  return index / (count - 1);
+}
+
+function frameActionFor(index, count) {
+  const t = interpolationFor(index, count);
+  if (index === 0) return 'Baseline frame. Establish the locked composition, lighting and geometry.';
+  if (index === count - 1) return 'Return closely to frame 01 so the loop closes cleanly with no visible jump.';
+  if (t < 0.2) return 'Introduce the first subtle movement: a small light, haze, reflection or environmental shift.';
+  if (t < 0.4) return 'Build the motion gradually while keeping camera, subject placement and architecture fixed.';
+  if (t < 0.6) return 'Reach the peak animation state: strongest flicker, glow, reflection, haze or chosen scene effect.';
+  if (t < 0.8) return 'Ease the animation back down with smaller changes than the peak frame.';
+  return 'Continue returning toward the baseline state so the final frame can reconnect seamlessly.';
+}
+
+function smoothnessRule(count) {
+  if (count === 4) return 'Use broad, clearly visible changes. Keep the loop simple and readable.';
+  if (count === 8) return 'Use medium-size changes with transition frames for a visibly smoother loop.';
+  return 'Use micro-transitions and restrained per-frame movement for the smoothest cinematic loop.';
+}
+
+function generateSceneRecipe() {
+  const count = targetCount();
+  const hold = defaultHold();
+  const presetId = els.scenePreset?.value || 'custom';
+  const presetDirection = PRESET_DIRECTIONS[presetId] || PRESET_DIRECTIONS.custom;
+  const userPrompt = (els.scenePrompt?.value || '').trim();
+  const sceneName = (els.sceneName?.value || 'My Game Scene').trim();
+  const combinedDirection = userPrompt ? `${presetDirection} User direction: ${userPrompt}` : presetDirection;
+  const filePrefix = (sceneName || 'scene').replace(/[^a-z0-9-_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'scene';
+
+  const frames = Array.from({ length: count }, (_, index) => ({
+    index: index + 1,
+    file: `${filePrefix}-frame-${String(index + 1).padStart(2, '0')}.png`,
+    hold,
+    prompt: `${combinedDirection} ${frameActionFor(index, count)} Preserve the same camera angle, crop, perspective, characters, props and major scene geometry as every other frame. Change only details intended to animate.`
+  }));
+
+  state.assistRecipe = {
+    version: 1,
+    tool: 'scene-animator',
+    mode: 'frame-plan',
+    providerIntent: 'chatgpt-assist-bridge-ready',
+    presetId,
+    sceneName,
+    targetFrames: count,
+    loop: els.loopMode.value === 'loop',
+    defaultHold: hold,
+    scenePrompt: userPrompt,
+    presetDirection,
+    smoothnessRule: smoothnessRule(count),
+    basePrompt: `${combinedDirection} Create the master/base scene first. Lock composition, camera, architecture, subject placement and perspective so all later frames can align exactly.`,
+    frames,
+    notes: 'Current Scene Animator generates the structured frame recipe and prompt sequence. PNG generation remains a separate/manual Firefly or future provider step until a dedicated generation pipeline is connected.'
+  };
+
+  if (els.assistStatus) els.assistStatus.textContent = `PLAN READY • ${count} FRAMES`;
+  renderFramePlan();
+}
+
+function renderFramePlan() {
+  if (!els.framePlan) return;
+  els.framePlan.innerHTML = '';
+  const recipe = state.assistRecipe;
+  if (!recipe) {
+    const li = document.createElement('li');
+    li.className = 'frame-plan-empty';
+    li.textContent = 'Enter a prompt or choose a preset, then generate a scene recipe.';
+    els.framePlan.appendChild(li);
+    return;
+  }
+  recipe.frames.forEach((frame) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<b>FRAME ${String(frame.index).padStart(2, '0')}</b><span>${frame.file}</span><p>${frame.prompt}</p>`;
+    els.framePlan.appendChild(li);
+  });
+}
+
+function recipePromptText() {
+  if (!state.assistRecipe) return '';
+  return [
+    `BASE PROMPT\n${state.assistRecipe.basePrompt}`,
+    '',
+    ...state.assistRecipe.frames.flatMap((frame) => [`FRAME ${String(frame.index).padStart(2, '0')} — ${frame.file}`, frame.prompt, ''])
+  ].join('\n');
+}
+
+async function copyFramePrompts() {
+  if (!state.assistRecipe) generateSceneRecipe();
+  const text = recipePromptText();
+  try {
+    await navigator.clipboard.writeText(text);
+    els.assistStatus.textContent = 'FRAME PROMPTS COPIED';
+  } catch {
+    const area = document.createElement('textarea');
+    area.value = text; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove();
+    els.assistStatus.textContent = 'FRAME PROMPTS COPIED';
+  }
+}
+
+function downloadJson(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function safeSceneName() {
+  return (els.sceneName.value || 'scene').trim().replace(/[^a-z0-9-_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'scene';
+}
+
+function exportRecipe() {
+  if (!state.assistRecipe) generateSceneRecipe();
+  downloadJson(state.assistRecipe, `${safeSceneName()}-scene-recipe.json`);
+  els.assistStatus.textContent = 'RECIPE EXPORTED';
+}
+
 function exportManifest() {
-  const safeName = (els.sceneName.value || 'scene').trim().replace(/[^a-z0-9-_]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'scene';
   const manifest = {
-    version: 2,
+    version: 3,
     tool: 'scene-animator',
     name: els.sceneName.value.trim() || 'My Game Scene',
     method: 'base-scenery-plus-aligned-still-frames-flipbook',
@@ -163,9 +311,10 @@ function exportManifest() {
     base: state.base ? { file: state.base.name } : null,
     frames: state.frames.map((frame, index) => ({ order: index + 1, file: frame.name, hold: Number(frame.hold) })),
     loop: els.loopMode.value === 'loop',
-    notes: 'Scene Animator supports 4, 8 or 16 aligned frames. Keep every frame the same dimensions and composition. Change only the details that should appear animated.'
+    assistRecipe: state.assistRecipe,
+    notes: 'Scene Animator supports 4, 8 or 16 aligned frames. Frame count drives both player capacity and the AI/prompt frame-plan recipe. Keep every generated frame the same dimensions and composition; change only details intended to animate.'
   };
-  const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${safeName}-scene.json`; a.click(); URL.revokeObjectURL(url);
+  downloadJson(manifest, `${safeSceneName()}-scene.json`);
 }
 
 function bindDrop(target, onFiles) {
@@ -193,6 +342,9 @@ els.nextBtn.addEventListener('click', () => step(1));
 els.exportManifestBtn.addEventListener('click', exportManifest);
 els.newSceneBtn.addEventListener('click', resetScene);
 els.loadFirstSceneBtn.addEventListener('click', () => loadBundledScene().catch(showLoadError));
+els.generateSceneRecipeBtn?.addEventListener('click', generateSceneRecipe);
+els.copyFramePromptsBtn?.addEventListener('click', copyFramePrompts);
+els.exportRecipeBtn?.addEventListener('click', exportRecipe);
 els.frameTarget.addEventListener('change', () => {
   const max = targetCount();
   if (state.frames.length > max) {
@@ -200,11 +352,17 @@ els.frameTarget.addEventListener('change', () => {
     removed.forEach(release);
     state.current = Math.min(state.current, Math.max(0, state.frames.length - 1));
   }
+  if (state.assistRecipe) generateSceneRecipe();
   renderFrames(); renderStage(); updateStatus();
 });
+els.defaultHold.addEventListener('change', () => {
+  if (state.assistRecipe) generateSceneRecipe();
+  updateStatus();
+});
+els.scenePreset?.addEventListener('change', () => { if (state.assistRecipe) generateSceneRecipe(); });
 
 bindDrop(els.baseDrop, (files) => files[0] && setBase(files[0]));
 bindDrop(els.framesGrid, (files) => addFrames(files));
-renderFrames(); renderStage(); updateStatus();
+renderFrames(); renderStage(); renderFramePlan(); updateStatus();
 
 loadBundledScene().catch(showLoadError);
