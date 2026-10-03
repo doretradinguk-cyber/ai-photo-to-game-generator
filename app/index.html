@@ -7,20 +7,22 @@
   <title>AI Radio Render Console</title>
   <link rel="stylesheet" href="./styles/console.css" />
   <link rel="stylesheet" href="./styles/retrowave-bg.css" />
+  <link rel="stylesheet" href="./styles/scene-layers.css" />
 </head>
 <body>
-  <div class="retrowave-world" aria-hidden="true">
-    <img class="rw-scene" src="../assets/backgrounds/retrowave-world.svg" alt="" />
-    <div class="rw-side-copy left">LIVE VISUALS<br>AI • CREATIVITY<br>NO LIMITS</div>
-    <div class="rw-side-copy right"><b>● LIVE</b><br>CONNECTED<br><span>CREATIVE SIGNAL 24/7</span></div>
-    <div class="rw-live-wave"></div>
+  <div class="scene-stage" data-scene-manifest="../assets/scenes/first-retrowave/scene.json" aria-hidden="true">
+    <img class="scene-stage__layer scene-stage__layer--base" data-scene-base alt="" />
+    <img class="scene-stage__layer scene-stage__layer--frame" data-scene-frame alt="" />
+    <div class="scene-stage__glow"></div>
+    <div class="scene-vignette"></div>
+    <div class="scene-stage__status" data-scene-status>LOADING FIRST RETROWAVE SCENE…</div>
   </div>
   <div class="scanlines" aria-hidden="true"></div>
   <main class="console-shell">
     <header class="topbar panel">
       <div class="brand"><div class="brand-mark">▲</div><div><h1>AI RADIO <span>RENDER CONSOLE</span></h1><p>TURN REAL PHOTOS INTO ICONIC STYLED ART</p></div></div>
       <div class="status-badges"><span>▣ DESKTOP READY<small>Windows • macOS • Linux</small></span><span>◎ BROWSER READY<small>Chrome • Edge • Safari</small></span></div>
-      <nav><button class="nav active">CREATE</button><button class="nav">PRESETS</button><button class="nav">HISTORY</button><button class="nav">SETTINGS</button></nav>
+      <nav><button class="nav active">CREATE</button><button class="nav">PRESETS</button><button class="nav">HISTORY</button><a class="nav" href="../scene-animator.html">SCENE ANIMATOR</a><button class="nav">SETTINGS</button></nav>
     </header>
     <section class="workspace-grid">
       <aside class="panel controls-panel"><div class="panel-title"><h2>1. CONTROLS</h2><button id="resetBtn" class="ghost">↻ RESET</button></div><div id="controls"></div></aside>
@@ -29,6 +31,7 @@
     </section>
     <section class="bottom-grid"><section class="panel workflow-panel"><div class="panel-title"><h2>⚡ WORKFLOW</h2><span>STEP <b id="stepNo">1</b> OF 5</span></div><div class="workflow"><button class="step active" data-step="1"><b>1</b><span>⇧</span><strong>UPLOAD</strong><small>Add your image</small></button><i>→</i><button class="step" data-step="2"><b>2</b><span>⌗</span><strong>DETECT</strong><small>Analyse content</small></button><i>→</i><button class="step" data-step="3"><b>3</b><span>◉</span><strong>PRESET</strong><small>Choose style</small></button><i>→</i><button class="step" data-step="4"><b>4</b><span>✦</span><strong>AI RENDER</strong><small>Generate artwork</small></button><i>→</i><button class="step" data-step="5"><b>5</b><span>⇩</span><strong>EXPORT</strong><small>Save & share</small></button></div></section><section class="panel export-panel"><div class="panel-title"><h2>5. EXPORT</h2></div><div class="export-controls"><label>Format<select id="formatSelect"><option>PNG</option><option>JPEG</option></select></label><label>Size<select id="sizeSelect"><option value="1">Original</option><option value="0.75">75%</option><option value="0.5">50%</option></select></label><label>Background<select><option>As Rendered</option></select></label></div><button id="exportBtn" class="primary">⇩ EXPORT IMAGE</button></section><section class="panel quick-panel"><div class="panel-title"><h2>⌕ QUICK TOOLS</h2></div><div class="quick-tools"><button>⌗<small>CROP & FRAME</small></button><button id="upscaleBtn">⛶<small>UPSCALE 2× / 4×</small></button><button id="variationBtn">▣<small>VARIATIONS</small></button><button id="compareBtn">◫<small>COMPARE</small></button></div></section></section>
   </main>
+  <script type="module" src="./scripts/background-scene.js"></script>
   <script type="module" src="./scripts/app.js"></script>
 </body>
 </html>
