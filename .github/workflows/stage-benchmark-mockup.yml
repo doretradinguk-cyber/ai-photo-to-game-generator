@@ -1,0 +1,30 @@
+name: Stage Adobe benchmark mockup exemplar
+
+on:
+  push:
+    paths:
+      - '.github/workflows/stage-benchmark-mockup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  stage-mockup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download approved mockup exemplar
+        run: |
+          mkdir -p dropzone/examples
+          curl -L --fail --retry 3 'https://at.adobe.com/5UB1oQcPi9HpriBS' -o dropzone/examples/ai-render-adobe-benchmark-mockup-example.jpg
+          echo 'f61ea70e463bc503c2278d404ba962c0f5b6d16805883dffee6fccea15b9a1c2  dropzone/examples/ai-render-adobe-benchmark-mockup-example.jpg' | sha256sum -c -
+      - name: Commit exemplar and remove one-time workflow
+        run: |
+          rm .github/workflows/stage-benchmark-mockup.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dropzone/examples/ai-render-adobe-benchmark-mockup-example.jpg .github/workflows/stage-benchmark-mockup.yml
+          git commit -m 'Archive Adobe benchmark mockup exemplar in dropzone'
+          git push
