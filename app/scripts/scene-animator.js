@@ -104,15 +104,6 @@ function resetScene() {
   els.sceneName.value = 'My Game Scene'; renderFrames(); renderStage(); updateStatus();
 }
 
-function preloadImage(url) {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(url);
-    image.onerror = () => reject(new Error(`Scene image failed: ${url}`));
-    image.src = url;
-  });
-}
-
 async function loadBundledScene() {
   stopPlayback();
   els.sceneStatus.textContent = 'LOADING';
@@ -123,12 +114,7 @@ async function loadBundledScene() {
   const manifest = await response.json();
   const root = new URL('./assets/scenes/first-retrowave/', window.location.href);
   const baseUrl = new URL(manifest.base.file, root).href;
-  const frames = manifest.frames.map((frame) => ({
-    ...frame,
-    url: new URL(frame.file, root).href
-  }));
-
-  await Promise.all([preloadImage(baseUrl), ...frames.map((frame) => preloadImage(frame.url))]);
+  const frames = manifest.frames.map((frame) => ({ ...frame, url: new URL(frame.file, root).href }));
 
   release(state.base);
   state.frames.forEach(release);
@@ -161,7 +147,7 @@ function showLoadError(error) {
   console.error(error);
   els.sceneStatus.textContent = 'LOAD ERROR';
   els.stageEmpty.hidden = false;
-  els.stageEmpty.innerHTML = '<b>SCENE FAILED TO LOAD</b><span>Refresh once GitHub Pages has finished deploying this commit.</span>';
+  els.stageEmpty.innerHTML = '<b>SCENE MANIFEST FAILED TO LOAD</b><span>Reload the page or use the manual scene button.</span>';
 }
 
 els.baseDrop.addEventListener('click', () => els.baseInput.click());
