@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050817" />
+  <title>Sprite Generator</title>
+  <link rel="stylesheet" href="./app/styles/scene-animator.css" />
+  <link rel="stylesheet" href="./app/styles/sprite-generator.css" />
+</head>
+<body>
+  <main class="sa-shell">
+    <header class="sa-topbar">
+      <div>
+        <p class="eyebrow">AI PHOTO-TO-GAME TOOLSET</p>
+        <h1>SPRITE <span>GENERATOR</span></h1>
+        <p class="subtitle">Upload a finished background scene or leave it empty, then upload a sprite sheet and preview clean 4 / 8 / 16 / 32-frame animation loops in the same tool style as Scene Animator.</p>
+      </div>
+      <nav>
+        <a href="./scene-animator.html">← SCENE ANIMATOR</a>
+        <a href="./index.html">RENDER CONSOLE</a>
+        <button id="newSpriteBtn" type="button">NEW SPRITE</button>
+      </nav>
+    </header>
+
+    <section class="sa-grid sprite-main-grid">
+      <aside class="panel setup-panel">
+        <div class="panel-head"><h2>1. SPRITE SETUP</h2><span id="spriteStatus">EMPTY</span></div>
+        <label class="field">Sprite name<input id="spriteName" value="My Animated Sprite" maxlength="64" /></label>
+        <label class="field">Frame count<select id="frameTarget"><option value="4">4 frames — quick action</option><option value="8">8 frames — smooth loop</option><option value="16">16 frames — detailed loop</option><option value="32">32 frames — full animation</option></select></label>
+        <label class="field">Sheet layout<select id="sheetLayout"><option value="auto">Auto-detect grid</option><option value="row">Single horizontal row</option><option value="column">Single vertical column</option></select><small>Auto chooses a grid that best matches the sprite-sheet aspect ratio.</small></label>
+        <label class="field">Frame hold<input id="frameHold" type="number" min="30" max="2000" step="10" value="120" /><small>milliseconds</small></label>
+        <label class="field">Playback<select id="loopMode"><option value="loop">Loop forever</option><option value="once">Play once</option></select></label>
+        <div class="method-card"><strong>SPRITE METHOD</strong><p>Optional background → sprite sheet → automatic frame slicing → 4 / 8 / 16 / 32-frame playback → export-ready frame contract for game use.</p></div>
+        <button id="exportManifestBtn" class="primary" type="button">EXPORT SPRITE JSON</button>
+      </aside>
+
+      <section class="panel stage-panel">
+        <div class="panel-head"><h2>2. LIVE PREVIEW</h2><span id="frameCounter">FRAME 0 / 0</span></div>
+        <div id="spriteStage" class="stage sprite-stage">
+          <canvas id="spriteCanvas" width="1280" height="720"></canvas>
+          <div id="stageEmpty" class="stage-empty"><b>UPLOAD A SPRITE SHEET</b><span>Background is optional.</span></div>
+        </div>
+        <div class="transport">
+          <button id="prevBtn" type="button">◀</button>
+          <button id="playBtn" class="play" type="button">▶ PLAY</button>
+          <button id="nextBtn" type="button">▶</button>
+          <label>SPEED<input id="speedRange" type="range" min="30" max="500" value="120" step="10" /></label>
+        </div>
+      </section>
+
+      <aside class="panel base-panel">
+        <div class="panel-head"><h2>3. BACKGROUND</h2><span>OPTIONAL</span></div>
+        <button id="backgroundDrop" class="upload-screen base-upload" type="button">
+          <input id="backgroundInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+          <b>＋ UPLOAD FINISHED SCENE</b><span>PNG / JPG / WebP</span><small id="backgroundName">No background — transparent preview</small>
+        </button>
+        <button id="clearBackgroundBtn" class="sub-action" type="button">REMOVE BACKGROUND</button>
+        <p class="tip">Leave this empty for transparent sprite-only animation, or load a finished scene to preview the sprite in context.</p>
+      </aside>
+    </section>
+
+    <section class="panel sprite-sheet-panel">
+      <div class="panel-head"><h2>4. SPRITE SHEET</h2><span id="sheetStatus">NOT LOADED</span></div>
+      <div class="sprite-sheet-grid">
+        <button id="sheetDrop" class="upload-screen sprite-upload" type="button">
+          <input id="sheetInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+          <b>＋ UPLOAD SPRITE SHEET</b><span>Transparent PNG recommended</span><small id="sheetName">Choose a sheet containing 4 / 8 / 16 / 32 frames</small>
+        </button>
+        <div class="sheet-preview-wrap"><img id="sheetPreview" alt="Sprite sheet preview" hidden /><div id="sheetInfo">NO SHEET LOADED</div></div>
+      </div>
+    </section>
+
+    <section class="panel frames-panel">
+      <div class="panel-head"><h2>5. SLICED FRAMES</h2><span id="frameTargetStatus">TARGET 4 FRAMES</span></div>
+      <div class="frames-toolbar"><button id="resliceBtn" class="primary" type="button" disabled>RESLICE SPRITE SHEET</button><button id="downloadFrameBtn" type="button" disabled>DOWNLOAD CURRENT PNG</button><span id="totalDuration">0 / 4 FRAMES</span></div>
+      <div id="framesGrid" class="frames-grid"><div class="sprite-empty">Upload a sprite sheet to generate frame thumbnails.</div></div>
+    </section>
+
+    <section class="panel output-panel">
+      <div class="panel-head"><h2>6. OUTPUT CONTRACT</h2><span>GAME READY</span></div>
+      <div class="contract">
+        <div><b>BACKGROUND</b><span>Optional finished scene or transparent stage</span></div>
+        <div><b>SHEET</b><span>One sprite-sheet source image</span></div>
+        <div><b>FRAMES</b><span>4, 8, 16 or 32 automatically sliced PNG-ready frames</span></div>
+        <div><b>PLAYBACK</b><span>Loop/once preview with adjustable frame hold</span></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="./app/scripts/sprite-generator.js?v=20261004-1"></script>
+</body>
+</html>
