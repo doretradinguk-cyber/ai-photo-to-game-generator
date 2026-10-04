@@ -1,3 +1,11 @@
+const styleHref = './app/styles/firefly-import.css';
+if (![...document.styleSheets].some((sheet) => sheet.href?.includes('firefly-import.css'))) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = styleHref;
+  document.head.appendChild(link);
+}
+
 const bindFireflyImport = ({ buttonId, inputId, targetInputId, statusId, multiple = false }) => {
   const button = document.getElementById(buttonId);
   const input = document.getElementById(inputId);
