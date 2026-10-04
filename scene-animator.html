@@ -7,6 +7,7 @@
   <title>Scene Animator</title>
   <link rel="stylesheet" href="./app/styles/scene-animator.css" />
   <link rel="stylesheet" href="./app/styles/local-frame-synth.css" />
+  <link rel="stylesheet" href="./app/styles/scene-package-import.css" />
 </head>
 <body>
   <main class="sa-shell">
@@ -14,7 +15,7 @@
       <div>
         <p class="eyebrow">AI PHOTO-TO-GAME TOOLSET</p>
         <h1>SCENE <span>ANIMATOR</span></h1>
-        <p class="subtitle">Upload a scene or Firefly artwork, plan 4 / 8 / 16-frame loops with the prompt console, generate local PNG frame sequences, then preview them as a living-comic flipbook.</p>
+        <p class="subtitle">Create a scene from one still background, or drag in a complete ZIP / folder / frame sequence and preview it immediately.</p>
       </div>
       <nav>
         <a href="./index.html">← RENDER CONSOLE</a>
@@ -22,6 +23,46 @@
         <button id="newSceneBtn" type="button">NEW SCENE</button>
       </nav>
     </header>
+
+    <section class="panel scene-start-panel">
+      <div class="panel-head"><h2>START HERE — CREATE OR LOAD A SCENE</h2><span>EASY MODE</span></div>
+      <div class="scene-start-grid">
+        <article class="scene-path-card create-card">
+          <span class="path-step">PATH A — MAKE A NEW ANIMATED SCENE</span>
+          <h3>Create from one still background</h3>
+          <p>Use one Firefly image, photo or finished background. Then choose a preset, type the motion you want, select 4 / 8 / 16 frames and generate the animation.</p>
+          <div class="scene-quick-flow">
+            <span><strong>1</strong> Upload still</span>
+            <span><strong>2</strong> Prompt + preset</span>
+            <span><strong>3</strong> 4 / 8 / 16</span>
+            <span><strong>4</strong> Generate scene</span>
+          </div>
+          <div class="scene-path-actions">
+            <button id="chooseStillBackgroundBtn" class="main-action" type="button">UPLOAD STILL BACKGROUND</button>
+          </div>
+        </article>
+
+        <article class="scene-path-card load-card">
+          <span class="path-step">PATH B — LOAD A READY-MADE SCENE</span>
+          <h3>Drop a scene ZIP, folder or frame sequence</h3>
+          <p>A ZIP containing <b>frame-01</b> through <b>frame-16</b> can be dropped here directly. If a package contains <b>scene.json</b> and a base image, those are detected too.</p>
+          <div id="scenePackageDrop" class="scene-package-drop" role="button" tabindex="0">
+            <b>DROP SCENE ZIP / FOLDER / FRAMES HERE</b>
+            <span>ZIP • scene.json • base image • numbered PNG/JPG/WebP/SVG frames</span>
+            <small>4, 8 and 16-frame packages auto-select the correct frame count</small>
+          </div>
+          <div class="scene-path-actions">
+            <button id="chooseSceneZipBtn" class="main-action" type="button">CHOOSE ZIP</button>
+            <button id="chooseSceneFolderBtn" type="button">CHOOSE FOLDER</button>
+            <button id="chooseSceneFramesBtn" type="button">CHOOSE FRAME FILES</button>
+          </div>
+          <input id="sceneZipInput" type="file" accept=".zip,application/zip" hidden />
+          <input id="sceneFolderInput" type="file" webkitdirectory directory multiple hidden />
+          <input id="scenePackageFramesInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml,application/json,.json" multiple hidden />
+          <p id="sceneImportStatus" class="scene-import-status" data-tone="normal">READY • DROP A PACKAGE OR CHOOSE A FILE SOURCE</p>
+        </article>
+      </div>
+    </section>
 
     <section class="sa-grid">
       <aside class="panel setup-panel">
@@ -32,7 +73,7 @@
         <label class="field">Playback<select id="loopMode"><option value="loop">Loop forever</option><option value="once">Play once</option></select></label>
         <div class="method-card">
           <strong>LOCKED METHOD</strong>
-          <p>Base scenery still → AI/prompt frame plan → Local Frame Synth or imported AI frames → 4 / 8 / 16-frame flick-book playback → HTML/CSS UI above it.</p>
+          <p>Still background → prompt plan → Local Frame Synth or imported AI frames → 4 / 8 / 16-frame playback → downloadable scene frames.</p>
         </div>
         <button id="loadFirstSceneBtn" class="primary" type="button">RELOAD FIRST RETROWAVE SCENE</button>
         <button id="exportManifestBtn" class="primary" type="button">EXPORT SCENE JSON</button>
@@ -64,7 +105,7 @@
         <button id="fireflyBaseBtn" class="sub-action" type="button">✦ IMPORT FIREFLY ARTWORK</button>
         <input id="fireflyBaseInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
         <p id="fireflyImportStatus" class="tip" data-tone="normal">Firefly export import is isolated from the normal uploader, so the existing scene workflow stays intact.</p>
-        <p class="tip">Upload one finished environment image. It becomes the locked source for the frame plan and can now be turned into a local 4 / 8 / 16 PNG animation set.</p>
+        <p class="tip">Upload one finished environment image. It becomes the locked source for the frame plan and can be turned into a local 4 / 8 / 16 PNG animation set.</p>
       </aside>
     </section>
 
@@ -85,7 +126,7 @@
           </label>
           <label class="field prompt-field">Prompt / art direction
             <textarea id="scenePrompt" rows="7" maxlength="1500" placeholder="Example: Rainy neon-noir hotel corridor. Keep the camera locked. Animate ceiling light flicker, magenta reflections, drifting haze and subtle shadow movement. Make the loop return cleanly to frame 1."></textarea>
-            <small>Preset only, prompt only, or preset + prompt. Keywords such as rain, fog, haze, flicker, neon, reflections, shadow, retro and scanlines also guide the Local Frame Synth.</small>
+            <small>Preset only, prompt only, or preset + prompt. Keywords such as rain, fog, haze, flicker, neon, reflections, shadow, retro and scanlines guide the Local Frame Synth.</small>
           </label>
           <div class="assist-actions">
             <button id="generateSceneRecipeBtn" class="primary" type="button">GENERATE SCENE RECIPE</button>
@@ -93,11 +134,11 @@
             <button id="exportRecipeBtn" type="button">EXPORT RECIPE JSON</button>
           </div>
           <div class="synth-actions">
-            <button id="generateLocalFramesBtn" class="synth-primary" type="button">GENERATE PNG FRAMES — LOCAL</button>
-            <button id="downloadLocalFramesBtn" type="button" disabled>DOWNLOAD PNG SET</button>
+            <button id="generateLocalFramesBtn" class="synth-primary" type="button">GENERATE SCENE FROM STILL</button>
+            <button id="downloadLocalFramesBtn" type="button" disabled>DOWNLOAD SCENE FRAMES</button>
             <span id="localSynthStatus" data-tone="normal">READY • USES BASE + PRESET + PROMPT + FRAME COUNT</span>
           </div>
-          <p class="assist-note"><b>Working now:</b> Local Frame Synth converts the uploaded still into a real 4 / 8 / 16-frame PNG set using prompt-aware lighting, colour, haze, rain, reflection and flicker effects while keeping scene geometry locked. <b>Firefly:</b> exported Firefly artwork can now enter as the base scene or imported animation frames without replacing the normal upload path.</p>
+          <p class="assist-note"><b>Path A:</b> upload one still, choose 4 / 8 / 16, preset and prompt, then click <b>Generate Scene From Still</b>. <b>Path B:</b> ready-made ZIPs/folders/frames load straight into the player above.</p>
         </div>
         <div class="frame-plan-wrap">
           <div class="frame-plan-head"><strong>FRAME PLAN</strong><span id="planMeta">4 frames • 180 ms</span></div>
@@ -124,15 +165,17 @@
     <section class="panel output-panel">
       <div class="panel-head"><h2>6. OUTPUT CONTRACT</h2><span>GAME READY</span></div>
       <div class="contract">
-        <div><b>BASE</b><span>One uploaded, Firefly-imported or committed scenery image</span></div>
-        <div><b>RECIPE</b><span>Preset + prompt + exact per-frame animation instructions</span></div>
+        <div><b>STILL</b><span>One uploaded or Firefly-generated background can become a new animated scene</span></div>
+        <div><b>PACKAGE</b><span>ZIP / folder / numbered frame sequence loads as a complete scene</span></div>
         <div><b>FRAMES</b><span>4, 8 or 16 generated/imported PNG stills with individual hold times</span></div>
-        <div><b>PIPELINE</b><span>Local synth works now; Firefly exports enter through a separate safe adapter</span></div>
+        <div><b>EXPORT</b><span>Download generated frame set and export the scene manifest JSON</span></div>
       </div>
     </section>
   </main>
-  <script type="module" src="./app/scripts/scene-animator.js?v=20261004-0140"></script>
-  <script type="module" src="./app/scripts/local-frame-synth.js?v=20261004-0215"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script type="module" src="./app/scripts/scene-animator.js?v=20261004-0435"></script>
+  <script type="module" src="./app/scripts/local-frame-synth.js?v=20261004-0435"></script>
   <script type="module" src="./app/scripts/firefly-import.js?v=20261004-1"></script>
+  <script type="module" src="./app/scripts/scene-package-import.js?v=20261004-0435"></script>
 </body>
 </html>
