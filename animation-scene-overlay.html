@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#050817" />
+  <title>Animation Scene Overlay Tool</title>
+  <link rel="stylesheet" href="./app/styles/scene-animator.css" />
+  <link rel="stylesheet" href="./app/styles/animation-scene-overlay.css" />
+</head>
+<body>
+  <main class="sa-shell overlay-shell">
+    <header class="sa-topbar">
+      <div>
+        <p class="eyebrow">AI PHOTO-TO-GAME TOOLSET</p>
+        <h1>ANIMATION SCENE <span>OVERLAY</span></h1>
+        <p class="subtitle">A simplified scene animation tool: keep one background fixed and cycle transparent overlay frames above it.</p>
+      </div>
+      <nav>
+        <a href="./index.html">← RENDER CONSOLE</a>
+        <a href="./scene-animator.html">SCENE ANIMATOR</a>
+        <a href="./sprite-generator.html">SPRITE GENERATOR</a>
+        <button id="resetOverlayToolBtn" type="button">NEW OVERLAY</button>
+      </nav>
+    </header>
+
+    <section class="overlay-workspace">
+      <aside class="panel overlay-controls">
+        <div class="panel-head"><h2>1. SETUP</h2><span>SIMPLE MODE</span></div>
+
+        <label class="field">Scene name
+          <input id="overlaySceneName" value="My Overlay Scene" maxlength="64" />
+        </label>
+
+        <label class="field">Frame count
+          <select id="overlayFrameTarget">
+            <option value="4">4 frames — quick loop</option>
+            <option value="8">8 frames — smooth loop</option>
+            <option value="16">16 frames — detailed loop</option>
+          </select>
+        </label>
+
+        <label class="field">Frame speed
+          <input id="overlaySpeed" type="range" min="50" max="500" step="10" value="140" />
+          <small><span id="overlaySpeedValue">140</span> ms per frame</small>
+        </label>
+
+        <button id="baseOverlayDrop" class="upload-screen overlay-upload" type="button">
+          <input id="baseOverlayInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
+          <b>＋ UPLOAD BASE SCENE</b>
+          <span>Static PNG / JPG / WebP / SVG</span>
+          <small id="baseOverlayName">No base loaded</small>
+        </button>
+
+        <button id="overlayFramesDrop" class="upload-screen overlay-upload" type="button">
+          <input id="overlayFramesInput" type="file" accept="image/png,image/webp,image/svg+xml" multiple hidden />
+          <b>＋ UPLOAD OVERLAY FRAMES</b>
+          <span>Transparent PNG / WebP / SVG</span>
+          <small id="overlayFramesStatus">0 / 4 frames loaded</small>
+        </button>
+
+        <div class="overlay-actions">
+          <button id="playOverlayBtn" class="primary" type="button">▶ PLAY</button>
+          <button id="clearOverlayFramesBtn" type="button">CLEAR FRAMES</button>
+          <button id="exportOverlayManifestBtn" type="button">EXPORT JSON</button>
+        </div>
+      </aside>
+
+      <section class="panel overlay-preview-panel">
+        <div class="panel-head"><h2>2. LIVE PREVIEW</h2><span id="overlayFrameCounter">FRAME 0 / 0</span></div>
+        <div id="overlayStage" class="overlay-stage">
+          <img id="overlayBasePreview" class="overlay-layer overlay-base" alt="" hidden />
+          <img id="overlayFramePreview" class="overlay-layer overlay-frame" alt="" hidden />
+          <div id="overlayEmpty" class="stage-empty">
+            <b>UPLOAD A BASE SCENE</b>
+            <span>Then add transparent overlay frames to animate lights, rain, smoke, reflections, signs or other effects.</span>
+          </div>
+        </div>
+        <div class="transport overlay-transport">
+          <button id="overlayPrevBtn" type="button">◀</button>
+          <button id="overlayPlayBtn" class="play" type="button">▶ PLAY</button>
+          <button id="overlayNextBtn" type="button">▶</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel overlay-frames-panel">
+      <div class="panel-head"><h2>3. OVERLAY FRAMES</h2><span>TRANSPARENT LAYERS</span></div>
+      <div id="overlayFrameGrid" class="overlay-frame-grid">
+        <div class="overlay-empty-card">Upload transparent frame images. They are played in filename order above the fixed background.</div>
+      </div>
+    </section>
+
+    <section class="panel output-panel">
+      <div class="panel-head"><h2>4. SIMPLE WORKFLOW</h2><span>GAME READY</span></div>
+      <div class="contract">
+        <div><b>BASE</b><span>One fixed finished background scene</span></div>
+        <div><b>OVERLAYS</b><span>4, 8 or 16 transparent animation frames</span></div>
+        <div><b>PLAYER</b><span>Adjust speed and preview the loop instantly</span></div>
+        <div><b>EXPORT</b><span>Save a lightweight JSON manifest for game integration</span></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="./app/scripts/animation-scene-overlay.js?v=20261004-1"></script>
+</body>
+</html>
