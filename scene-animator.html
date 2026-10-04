@@ -14,10 +14,11 @@
       <div>
         <p class="eyebrow">AI PHOTO-TO-GAME TOOLSET</p>
         <h1>SCENE <span>ANIMATOR</span></h1>
-        <p class="subtitle">Upload a Firefly scene, plan 4 / 8 / 16-frame loops with the prompt console, generate local PNG frame sequences, then preview them as a living-comic flipbook.</p>
+        <p class="subtitle">Upload a scene or Firefly artwork, plan 4 / 8 / 16-frame loops with the prompt console, generate local PNG frame sequences, then preview them as a living-comic flipbook.</p>
       </div>
       <nav>
         <a href="./index.html">← RENDER CONSOLE</a>
+        <a href="./sprite-generator.html">SPRITE GENERATOR</a>
         <button id="newSceneBtn" type="button">NEW SCENE</button>
       </nav>
     </header>
@@ -57,10 +58,13 @@
         <button id="baseDrop" class="upload-screen base-upload" type="button">
           <input id="baseInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
           <b>＋ UPLOAD BASE SCENE</b>
-          <span>Firefly PNG / JPG / WebP / SVG</span>
+          <span>PNG / JPG / WebP / SVG</span>
           <small id="baseName">No base image loaded</small>
         </button>
-        <p class="tip">Upload one finished Firefly environment image. It becomes the locked source for the frame plan and can now be turned into a local 4 / 8 / 16 PNG animation set.</p>
+        <button id="fireflyBaseBtn" class="sub-action" type="button">✦ IMPORT FIREFLY ARTWORK</button>
+        <input id="fireflyBaseInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
+        <p id="fireflyImportStatus" class="tip" data-tone="normal">Firefly export import is isolated from the normal uploader, so the existing scene workflow stays intact.</p>
+        <p class="tip">Upload one finished environment image. It becomes the locked source for the frame plan and can now be turned into a local 4 / 8 / 16 PNG animation set.</p>
       </aside>
     </section>
 
@@ -93,7 +97,7 @@
             <button id="downloadLocalFramesBtn" type="button" disabled>DOWNLOAD PNG SET</button>
             <span id="localSynthStatus" data-tone="normal">READY • USES BASE + PRESET + PROMPT + FRAME COUNT</span>
           </div>
-          <p class="assist-note"><b>Working now:</b> Local Frame Synth converts the uploaded still into a real 4 / 8 / 16-frame PNG set using prompt-aware lighting, colour, haze, rain, reflection and flicker effects while keeping scene geometry locked. <b>Later:</b> ChatGPT/Adobe image providers can replace or enhance this synthesis stage for true generative frame changes without changing the Scene Animator contract.</p>
+          <p class="assist-note"><b>Working now:</b> Local Frame Synth converts the uploaded still into a real 4 / 8 / 16-frame PNG set using prompt-aware lighting, colour, haze, rain, reflection and flicker effects while keeping scene geometry locked. <b>Firefly:</b> exported Firefly artwork can now enter as the base scene or imported animation frames without replacing the normal upload path.</p>
         </div>
         <div class="frame-plan-wrap">
           <div class="frame-plan-head"><strong>FRAME PLAN</strong><span id="planMeta">4 frames • 180 ms</span></div>
@@ -107,6 +111,8 @@
       <div class="frames-toolbar">
         <button id="addFramesBtn" class="primary" type="button">＋ ADD SCENE IMAGES</button>
         <input id="framesInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" multiple hidden />
+        <button id="fireflyFramesBtn" type="button">✦ IMPORT FIREFLY FRAMES</button>
+        <input id="fireflyFramesInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden />
         <button id="clearFramesBtn" type="button">CLEAR FRAMES</button>
         <span id="totalDuration">0 / 4 FRAMES</span>
       </div>
@@ -118,14 +124,15 @@
     <section class="panel output-panel">
       <div class="panel-head"><h2>6. OUTPUT CONTRACT</h2><span>GAME READY</span></div>
       <div class="contract">
-        <div><b>BASE</b><span>One uploaded or committed scenery image</span></div>
+        <div><b>BASE</b><span>One uploaded, Firefly-imported or committed scenery image</span></div>
         <div><b>RECIPE</b><span>Preset + prompt + exact per-frame animation instructions</span></div>
         <div><b>FRAMES</b><span>4, 8 or 16 generated/imported PNG stills with individual hold times</span></div>
-        <div><b>PIPELINE</b><span>Local synth works now; ChatGPT / Adobe generation adapters can be inserted later</span></div>
+        <div><b>PIPELINE</b><span>Local synth works now; Firefly exports enter through a separate safe adapter</span></div>
       </div>
     </section>
   </main>
   <script type="module" src="./app/scripts/scene-animator.js?v=20261004-0140"></script>
   <script type="module" src="./app/scripts/local-frame-synth.js?v=20261004-0215"></script>
+  <script type="module" src="./app/scripts/firefly-import.js?v=20261004-1"></script>
 </body>
 </html>
